@@ -38,8 +38,10 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
+  // import.meta.env.BASE_URL is "/" for root-served (custom domain) and "/neuropath-game/" for default GH Pages.
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <div className="min-h-screen">
         <TopBar />
         <AnimatedRoutes />
