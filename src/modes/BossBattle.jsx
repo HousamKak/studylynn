@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { generateMcq } from "../utils/questions";
 import { cardById, SUITS } from "../data/cards";
 import { useProgress } from "../state/progress";
 
-export default function BossBattle({ onExit }) {
+export default function BossBattle() {
+  const navigate = useNavigate();
+  const goHome = () => navigate("/neuropath");
   const { recordAnswer, addXp, submitHighScore, updateStreak } = useProgress();
   const [q, setQ] = useState(() => generateMcq());
   const [lives, setLives] = useState(3);
@@ -21,6 +24,7 @@ export default function BossBattle({ onExit }) {
   useEffect(() => {
     if (finished) return;
     if (timeLeft <= 0 || lives <= 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- end-of-round terminal transition
       setFinished(true);
       submitHighScore("bossBattle", score);
       if (score >= 100) confetti({ particleCount: 200, spread: 120 });
@@ -57,7 +61,7 @@ export default function BossBattle({ onExit }) {
 
   if (finished) {
     return (
-      <ModeShell title="Boss Battle" onExit={onExit}>
+      <ModeShell title="Boss Battle">
         <div className="text-center py-10">
           <div className="text-6xl mb-4">{score >= 100 ? "👑" : "💀"}</div>
           <div className="font-display text-4xl font-bold text-white">{score}</div>
@@ -68,7 +72,7 @@ export default function BossBattle({ onExit }) {
             <button className="btn-primary" onClick={() => window.location.reload()}>
               Rematch
             </button>
-            <button className="btn-ghost" onClick={onExit}>
+            <button className="btn-ghost" onClick={goHome}>
               Home
             </button>
           </div>
@@ -80,8 +84,7 @@ export default function BossBattle({ onExit }) {
   return (
     <ModeShell
       title="Boss Battle"
-      onExit={onExit}
-      hud={
+            hud={
         <div className="flex items-center justify-between gap-3">
           <div className="flex gap-1">
             {[0, 1, 2].map((n) => (

@@ -1,20 +1,21 @@
+import { Link } from "react-router-dom";
 import { useProgress } from "../state/progress";
 
-export default function TopBar({ onHome }) {
+export default function TopBar() {
   const { state, level, xpInLevel, xpToNext, progressToNext } = useProgress();
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-black/30 border-b border-white/10">
       <div className="max-w-5xl mx-auto px-5 py-3 flex items-center gap-4">
-        <button
-          onClick={onHome}
+        <Link
+          to="/"
           className="text-left flex items-center gap-2 hover:opacity-80 transition"
         >
-          <span className="text-2xl">🧠</span>
+          <span className="text-2xl">📚</span>
           <span className="font-display text-xl font-bold text-white">
-            Neuropath<span className="text-violet-400">.lab</span>
+            study<span className="text-violet-400">.lynnhamad</span>
           </span>
-        </button>
+        </Link>
 
         <div className="flex-1" />
 
@@ -22,7 +23,9 @@ export default function TopBar({ onHome }) {
           <div className="flex items-center gap-2">
             <span className="text-orange-400 text-lg">🔥</span>
             <span className="text-white font-semibold">{state.streak}</span>
-            <span className="text-white/50 text-sm">day{state.streak === 1 ? "" : "s"}</span>
+            <span className="text-white/50 text-sm">
+              day{state.streak === 1 ? "" : "s"}
+            </span>
           </div>
           <div className="h-6 w-px bg-white/10" />
           <div className="flex items-center gap-3">

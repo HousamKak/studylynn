@@ -1,15 +1,17 @@
 import { motion } from "framer-motion";
+import { useNavigate, Link } from "react-router-dom";
 import { SUITS, cards } from "../data/cards";
 import { useProgress, masteryColor } from "../state/progress";
 
 const MODES = [
   {
-    id: "quickQuiz",
+    id: "quiz",
     title: "Quick Quiz",
     desc: "10 multiple-choice questions, all 77 cards in play.",
     icon: "⚡",
     accent: "from-yellow-500/30 to-orange-500/20",
     border: "border-yellow-500/30",
+    scoreKey: "quickQuiz",
   },
   {
     id: "flashcards",
@@ -18,6 +20,7 @@ const MODES = [
     icon: "🗂",
     accent: "from-blue-500/30 to-indigo-500/20",
     border: "border-blue-500/30",
+    scoreKey: "flashcards",
   },
   {
     id: "match",
@@ -26,6 +29,7 @@ const MODES = [
     icon: "🔗",
     accent: "from-pink-500/30 to-rose-500/20",
     border: "border-pink-500/30",
+    scoreKey: "match",
   },
   {
     id: "sort",
@@ -34,14 +38,16 @@ const MODES = [
     icon: "📦",
     accent: "from-emerald-500/30 to-teal-500/20",
     border: "border-emerald-500/30",
+    scoreKey: "sort",
   },
   {
-    id: "bossBattle",
+    id: "boss",
     title: "Boss Battle",
     desc: "60s rapid-fire survival. 3 lives. Right = +5s.",
     icon: "👹",
     accent: "from-red-500/30 to-rose-600/20",
     border: "border-red-500/30",
+    scoreKey: "bossBattle",
   },
   {
     id: "diagnose",
@@ -50,11 +56,13 @@ const MODES = [
     icon: "🩺",
     accent: "from-violet-500/30 to-fuchsia-500/20",
     border: "border-violet-500/30",
+    scoreKey: "diagnose",
   },
 ];
 
-export default function Home({ onPickMode }) {
+export default function NeuropathHome() {
   const { state } = useProgress();
+  const navigate = useNavigate();
 
   const masteryStats = (() => {
     let mastered = 0;
@@ -78,8 +86,14 @@ export default function Home({ onPickMode }) {
         animate={{ opacity: 1, y: 0 }}
         className="mb-10"
       >
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 text-white/50 hover:text-white text-sm mb-3 transition"
+        >
+          ← All subjects
+        </Link>
         <h1 className="font-display text-5xl sm:text-6xl font-bold text-white tracking-tight">
-          Pick your game.
+          Veterinary Neuropathology
         </h1>
         <p className="text-white/60 mt-3 text-lg">
           77 cards. Six modes. One mission — make the BVD timeline stick.
@@ -107,7 +121,7 @@ export default function Home({ onPickMode }) {
         {MODES.map((m, i) => (
           <motion.button
             key={m.id}
-            onClick={() => onPickMode(m.id)}
+            onClick={() => navigate(`/neuropath/${m.id}`)}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
@@ -121,7 +135,7 @@ export default function Home({ onPickMode }) {
             <div className="mt-4 flex items-center gap-2 text-xs">
               <span className="text-white/50">High score</span>
               <span className="text-white font-semibold tabular-nums">
-                {state.highScores?.[m.id] ?? 0}
+                {state.highScores?.[m.scoreKey] ?? 0}
               </span>
             </div>
           </motion.button>

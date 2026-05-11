@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { generateQuestionSet } from "../utils/questions";
@@ -8,7 +9,9 @@ import { useProgress } from "../state/progress";
 
 const TOTAL = 10;
 
-export default function QuickQuiz({ onExit }) {
+export default function QuickQuiz() {
+  const navigate = useNavigate();
+  const goHome = () => navigate("/neuropath");
   const { recordAnswer, addXp, submitHighScore, updateStreak } = useProgress();
   const questions = useMemo(() => generateQuestionSet(TOTAL), []);
   const [i, setI] = useState(0);
@@ -57,7 +60,7 @@ export default function QuickQuiz({ onExit }) {
 
   if (finished) {
     return (
-      <ModeShell title="Quick Quiz" onExit={onExit}>
+      <ModeShell title="Quick Quiz">
         <div className="text-center py-10">
           <div className="text-6xl mb-4">🎉</div>
           <div className="font-display text-4xl font-bold text-white">
@@ -70,7 +73,7 @@ export default function QuickQuiz({ onExit }) {
             <button className="btn-primary" onClick={() => window.location.reload()}>
               Play again
             </button>
-            <button className="btn-ghost" onClick={onExit}>
+            <button className="btn-ghost" onClick={goHome}>
               Home
             </button>
           </div>
@@ -83,8 +86,7 @@ export default function QuickQuiz({ onExit }) {
     <ModeShell
       title="Quick Quiz"
       subtitle={`Question ${i + 1} of ${TOTAL}`}
-      onExit={onExit}
-      hud={
+            hud={
         <div className="flex items-center gap-4">
           <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
             <motion.div

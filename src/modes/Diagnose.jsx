@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { cards, SUITS } from "../data/cards";
@@ -8,7 +9,9 @@ import { shuffle } from "../utils/random";
 
 const TOTAL = 8;
 
-export default function Diagnose({ onExit }) {
+export default function Diagnose() {
+  const navigate = useNavigate();
+  const goHome = () => navigate("/neuropath");
   const { recordAnswer, addXp, submitHighScore, updateStreak } = useProgress();
   const [round, setRound] = useState(0);
   const [score, setScore] = useState(0);
@@ -63,7 +66,7 @@ export default function Diagnose({ onExit }) {
 
   if (finished) {
     return (
-      <ModeShell title="Diagnose" onExit={onExit}>
+      <ModeShell title="Diagnose">
         <div className="text-center py-10">
           <div className="text-6xl mb-4">🩺</div>
           <div className="font-display text-4xl font-bold text-white">{score}</div>
@@ -74,7 +77,7 @@ export default function Diagnose({ onExit }) {
             <button className="btn-primary" onClick={() => window.location.reload()}>
               New shift
             </button>
-            <button className="btn-ghost" onClick={onExit}>
+            <button className="btn-ghost" onClick={goHome}>
               Home
             </button>
           </div>
@@ -89,8 +92,7 @@ export default function Diagnose({ onExit }) {
     <ModeShell
       title="Diagnose"
       subtitle={`Case ${round + 1} of ${TOTAL}`}
-      onExit={onExit}
-      hud={
+            hud={
         <div className="text-sm text-white">
           Score: <span className="font-bold tabular-nums">{score}</span>
         </div>

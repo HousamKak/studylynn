@@ -42,7 +42,9 @@ const load = () => {
 const save = (state) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {}
+  } catch {
+    // Quota exceeded or storage blocked — fail silently; in-memory state still works.
+  }
 };
 
 export const xpForLevel = (level) => Math.floor(50 * level * (level + 1));

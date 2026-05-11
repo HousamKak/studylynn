@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { cards, SUITS } from "../data/cards";
 import { useProgress } from "../state/progress";
 import { shuffle } from "../utils/random";
 
-export default function Sort({ onExit }) {
+export default function Sort() {
+  const navigate = useNavigate();
+  const goHome = () => navigate("/neuropath");
   const { recordAnswer, addXp, submitHighScore, updateStreak } = useProgress();
   const queue = useMemo(() => shuffle([...cards]), []);
   const [i, setI] = useState(0);
@@ -20,6 +23,7 @@ export default function Sort({ onExit }) {
   useEffect(() => {
     if (finished) return;
     if (timeLeft <= 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- end-of-round terminal transition
       setFinished(true);
       submitHighScore("sort", score);
       return;
@@ -52,7 +56,7 @@ export default function Sort({ onExit }) {
     submitHighScore("sort", score);
     if (score > 50) confetti({ particleCount: 100, spread: 80 });
     return (
-      <ModeShell title="Sort" onExit={onExit}>
+      <ModeShell title="Sort">
         <div className="text-center py-10">
           <div className="text-6xl mb-4">📦</div>
           <div className="font-display text-4xl font-bold text-white">{score}</div>
@@ -61,7 +65,7 @@ export default function Sort({ onExit }) {
             <button className="btn-primary" onClick={() => window.location.reload()}>
               Play again
             </button>
-            <button className="btn-ghost" onClick={onExit}>
+            <button className="btn-ghost" onClick={goHome}>
               Home
             </button>
           </div>
@@ -74,8 +78,7 @@ export default function Sort({ onExit }) {
     <ModeShell
       title="Sort"
       subtitle="Drop each card into its category. +1s correct / −2s wrong."
-      onExit={onExit}
-      hud={
+            hud={
         <div className="flex items-center justify-between text-sm">
           <div className="text-white">
             Score: <span className="font-bold tabular-nums">{score}</span>

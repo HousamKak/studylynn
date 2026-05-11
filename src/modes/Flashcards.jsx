@@ -5,7 +5,7 @@ import { cards, SUITS } from "../data/cards";
 import { useProgress } from "../state/progress";
 import { shuffle } from "../utils/random";
 
-export default function Flashcards({ onExit }) {
+export default function Flashcards() {
   const { state, recordAnswer, addXp, updateStreak } = useProgress();
 
   // Deck ordering: untouched + weak first, then learning, mastered last
@@ -46,8 +46,7 @@ export default function Flashcards({ onExit }) {
     <ModeShell
       title="Flashcards"
       subtitle={`Card ${i + 1} of ${deck.length} — weakest first`}
-      onExit={onExit}
-    >
+          >
       <AnimatePresence mode="wait">
         <motion.div
           key={i + (flipped ? "-back" : "-front")}

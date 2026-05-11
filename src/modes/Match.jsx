@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { cards, SUITS } from "../data/cards";
@@ -12,7 +12,9 @@ const PAIR_FIELDS = [
   { key: "species", label: "Species" },
 ];
 
-export default function Match({ onExit }) {
+export default function Match() {
+  const navigate = useNavigate();
+  const goHome = () => navigate("/neuropath");
   const { addXp, recordAnswer, submitHighScore, updateStreak } = useProgress();
   const [round, setRound] = useState(0);
   const [matched, setMatched] = useState({}); // cardId -> true
@@ -23,6 +25,7 @@ export default function Match({ onExit }) {
   const [timeLeft, setTimeLeft] = useState(90);
   const [finished, setFinished] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `round` is a manual reset trigger
   const set = useMemo(() => sample(cards, 6), [round]);
   const leftLabels = useMemo(() => set.map((c) => ({ id: c.id, label: c.name })), [set]);
   const rightLabels = useMemo(
@@ -37,6 +40,7 @@ export default function Match({ onExit }) {
   useEffect(() => {
     if (finished) return;
     if (timeLeft <= 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- end-of-round terminal transition
       setFinished(true);
       submitHighScore("match", score);
       return;
@@ -82,7 +86,7 @@ export default function Match({ onExit }) {
 
   if (finished) {
     return (
-      <ModeShell title="Match" onExit={onExit}>
+      <ModeShell title="Match">
         <div className="text-center py-10">
           <div className="text-6xl mb-4">⏱</div>
           <div className="font-display text-4xl font-bold text-white">{score}</div>
@@ -91,7 +95,7 @@ export default function Match({ onExit }) {
             <button className="btn-primary" onClick={() => window.location.reload()}>
               Play again
             </button>
-            <button className="btn-ghost" onClick={onExit}>
+            <button className="btn-ghost" onClick={goHome}>
               Home
             </button>
           </div>
@@ -104,8 +108,7 @@ export default function Match({ onExit }) {
     <ModeShell
       title="Match"
       subtitle={`Match disease with ${field.label.toLowerCase()}`}
-      onExit={onExit}
-      hud={
+            hud={
         <div className="flex items-center justify-between text-sm">
           <div className="text-white">
             Score: <span className="font-bold tabular-nums">{score}</span>
