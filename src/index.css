@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  color-scheme: dark;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top, #1a1230 0%, #0a0814 60%, #060410 100%);
+  color: #e5e4e7;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-violet-500 hover:bg-violet-400 text-white shadow-lg shadow-violet-500/30;
+  }
+  .btn-ghost {
+    @apply btn bg-white/5 hover:bg-white/10 text-white border border-white/10;
+  }
+  .card {
+    @apply rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-sm;
+  }
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
