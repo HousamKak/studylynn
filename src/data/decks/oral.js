@@ -453,4 +453,42 @@ export const oralDeck = {
     caseFileTitle: "🦷 Case file",
     diagnoseVerb: "Diagnose",
   },
+  infographics: [
+    {
+      id: 1,
+      title: "Congenital Anomalies of the Oral Cavity",
+      file: "01-congenital-anomalies",
+      suits: ["congenital"],
+    },
+    {
+      id: 2,
+      title: "Systemic & Degenerative Oral Lesions",
+      file: "02-systemic-degenerative",
+      suits: ["systemic"],
+    },
+    {
+      id: 3,
+      title: "Viral Stomatitis",
+      file: "03-viral-stomatitis",
+      suits: ["viral"],
+    },
+    {
+      id: 4,
+      title: "Bacterial, Fungal & Trauma-Related Oral Infections",
+      file: "04-bacterial-fungal-trauma",
+      suits: ["bacterial"],
+    },
+    {
+      id: 5,
+      title: "Immune, Chemical & Hypersensitivity Stomatitis",
+      file: "05-immune-chemical-hypersensitivity",
+      suits: ["immune"],
+    },
+    {
+      id: 6,
+      title: "Oral Neoplasia & Tumor Staging",
+      file: "06-neoplasia-staging",
+      suits: ["neoplasia"],
+    },
+  ],
 };

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useDeck } from "../state/deckContextHook";
 import { useProgress, masteryColor } from "../state/progress";
+import InfographicGallery from "../components/InfographicGallery";
 
 const MODES = [
   {
@@ -154,6 +155,8 @@ export default function SubjectHome() {
           </motion.button>
         ))}
       </div>
+
+      <InfographicGallery deck={deck} />
 
       <div className="mt-12">
         <h2 className="font-display text-2xl font-bold text-white mb-4">Mastery wall</h2>

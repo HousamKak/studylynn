@@ -864,4 +864,48 @@ export const giDeck = {
     caseFileTitle: "💊 Drug profile",
     diagnoseVerb: "Identify the drug",
   },
+  infographics: [
+    {
+      id: 1,
+      title: "Gastric Secretion — Physiology, Cells & Regulation",
+      file: "01-gastric-physiology",
+      suits: ["physiology"],
+    },
+    {
+      id: 2,
+      title: "Drugs for GI Ulcers — Acid Suppression & Mucosal Protection",
+      file: "02-anti-ulcer-therapy",
+      suits: ["acid"],
+    },
+    {
+      id: 3,
+      title: "Emesis Physiology & Emetics",
+      file: "03-emesis-physiology-emetics",
+      suits: ["emesis"],
+    },
+    {
+      id: 4,
+      title: "Antiemetic Drugs",
+      file: "04-antiemetics",
+      suits: ["emesis"],
+    },
+    {
+      id: 5,
+      title: "GI Prokinetic Drugs",
+      file: "05-prokinetics",
+      suits: ["prokinetic"],
+    },
+    {
+      id: 6,
+      title: "Antidiarrheals & IBD Treatment",
+      file: "06-antidiarrheals-ibd",
+      suits: ["antidiarrheal"],
+    },
+    {
+      id: 7,
+      title: "Laxatives & Cathartics",
+      file: "07-laxatives-cathartics",
+      suits: ["laxative"],
+    },
+  ],
 };
