@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
-import { useNavigate, Link } from "react-router-dom";
-import { SUITS, cards } from "../data/cards";
+import { Link, useNavigate } from "react-router-dom";
+import { useDeck } from "../state/deckContextHook";
 import { useProgress, masteryColor } from "../state/progress";
 
 const MODES = [
   {
     id: "quiz",
     title: "Quick Quiz",
-    desc: "10 multiple-choice questions, all 77 cards in play.",
+    desc: "10 multiple-choice questions across the whole deck.",
     icon: "⚡",
     accent: "from-yellow-500/30 to-orange-500/20",
     border: "border-yellow-500/30",
@@ -25,7 +25,7 @@ const MODES = [
   {
     id: "match",
     title: "Match",
-    desc: "Pair diseases with their etiology, species, or clue.",
+    desc: "Pair entries with their class, target, or clue.",
     icon: "🔗",
     accent: "from-pink-500/30 to-rose-500/20",
     border: "border-pink-500/30",
@@ -51,8 +51,8 @@ const MODES = [
   },
   {
     id: "diagnose",
-    title: "Diagnose",
-    desc: "Read a clinical case. Pick the disease from all 77.",
+    title: "Diagnose / Identify",
+    desc: "Read a case. Pick the right entry from the whole deck.",
     icon: "🩺",
     accent: "from-violet-500/30 to-fuchsia-500/20",
     border: "border-violet-500/30",
@@ -60,24 +60,39 @@ const MODES = [
   },
 ];
 
-export default function NeuropathHome() {
-  const { state } = useProgress();
+export default function SubjectHome() {
+  const deck = useDeck();
   const navigate = useNavigate();
+  const { state } = useProgress();
 
   const masteryStats = (() => {
     let mastered = 0;
     let learning = 0;
     let weak = 0;
-    cards.forEach((c) => {
-      const m = state.mastery[c.id];
+    deck.cards.forEach((c) => {
+      const m = state.mastery[`${deck.slug}:${c.id}`];
       if (!m || m.reps < 2) return;
       const ratio = m.correct / m.reps;
       if (ratio >= 0.85) mastered++;
       else if (ratio >= 0.6) learning++;
       else weak++;
     });
-    return { mastered, learning, weak, untouched: cards.length - mastered - learning - weak };
+    return {
+      mastered,
+      learning,
+      weak,
+      untouched: deck.cards.length - mastered - learning - weak,
+    };
   })();
+
+  const totalSeen = deck.cards.reduce((acc, c) => {
+    const m = state.mastery[`${deck.slug}:${c.id}`];
+    return acc + (m?.reps || 0);
+  }, 0);
+  const totalCorrect = deck.cards.reduce((acc, c) => {
+    const m = state.mastery[`${deck.slug}:${c.id}`];
+    return acc + (m?.correct || 0);
+  }, 0);
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-10">
@@ -93,35 +108,33 @@ export default function NeuropathHome() {
           ← All subjects
         </Link>
         <h1 className="font-display text-5xl sm:text-6xl font-bold text-white tracking-tight">
-          Veterinary Neuropathology
+          {deck.title}
         </h1>
         <p className="text-white/60 mt-3 text-lg">
-          77 cards. Six modes. One mission — make the BVD timeline stick.
+          {deck.cards.length} cards · {Object.keys(deck.suits).length} categories · six modes.
         </p>
       </motion.div>
 
-      {/* Stats bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
-        <StatCard label="Total XP" value={state.xp} accent="text-violet-400" />
         <StatCard
           label="Accuracy"
-          value={
-            state.totalSeen > 0
-              ? `${Math.round((state.totalCorrect / state.totalSeen) * 100)}%`
-              : "—"
-          }
+          value={totalSeen > 0 ? `${Math.round((totalCorrect / totalSeen) * 100)}%` : "—"}
           accent="text-emerald-400"
         />
-        <StatCard label="Mastered" value={`${masteryStats.mastered}/77`} accent="text-green-400" />
+        <StatCard
+          label="Mastered"
+          value={`${masteryStats.mastered}/${deck.cards.length}`}
+          accent="text-green-400"
+        />
+        <StatCard label="Learning" value={masteryStats.learning} accent="text-yellow-400" />
         <StatCard label="Weak cards" value={masteryStats.weak} accent="text-red-400" />
       </div>
 
-      {/* Mode grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {MODES.map((m, i) => (
           <motion.button
             key={m.id}
-            onClick={() => navigate(`/neuropath/${m.id}`)}
+            onClick={() => navigate(`${deck.routePrefix}/${m.id}`)}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
@@ -135,28 +148,26 @@ export default function NeuropathHome() {
             <div className="mt-4 flex items-center gap-2 text-xs">
               <span className="text-white/50">High score</span>
               <span className="text-white font-semibold tabular-nums">
-                {state.highScores?.[m.scoreKey] ?? 0}
+                {state.highScores?.[`${deck.slug}:${m.scoreKey}`] ?? 0}
               </span>
             </div>
           </motion.button>
         ))}
       </div>
 
-      {/* Mastery wall */}
       <div className="mt-12">
         <h2 className="font-display text-2xl font-bold text-white mb-4">Mastery wall</h2>
         <p className="text-white/50 text-sm mb-4">
-          Each dot = one card. Green = mastered (≥85%), yellow = learning, red = needs work, gray = untouched.
+          Each dot = one card. Green = mastered (≥85%), yellow = learning, red = needs work, gray =
+          untouched.
         </p>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(20px,1fr))] gap-1.5">
-          {cards.map((c) => {
-            const m = state.mastery[c.id];
+          {deck.cards.map((c) => {
+            const m = state.mastery[`${deck.slug}:${c.id}`];
             return (
               <div
                 key={c.id}
-                title={`${c.name} — ${
-                  m ? `${m.correct}/${m.reps}` : "untouched"
-                }`}
+                title={`${c.name} — ${m ? `${m.correct}/${m.reps}` : "untouched"}`}
                 className="aspect-square rounded-sm transition-transform hover:scale-150 hover:z-10"
                 style={{ background: masteryColor(m) }}
               />
@@ -165,12 +176,11 @@ export default function NeuropathHome() {
         </div>
       </div>
 
-      {/* Suit legend */}
       <div className="mt-12 mb-6">
-        <h2 className="font-display text-2xl font-bold text-white mb-4">The 6 suits</h2>
+        <h2 className="font-display text-2xl font-bold text-white mb-4">Categories</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {Object.entries(SUITS).map(([key, s]) => {
-            const count = cards.filter((c) => c.suit === key).length;
+          {Object.entries(deck.suits).map(([key, s]) => {
+            const count = deck.cards.filter((c) => c.suit === key).length;
             return (
               <div
                 key={key}

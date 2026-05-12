@@ -12,7 +12,7 @@ export default function Hub() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-baseline gap-3">
           <h1 className="font-display text-5xl sm:text-6xl font-bold text-white tracking-tight">
-            study.<span className="text-violet-400">lynnhamad</span>
+            study<span className="text-violet-400">lynn</span>
           </h1>
         </div>
         <p className="text-white/60 mt-4 text-lg max-w-2xl">

@@ -2,52 +2,52 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
-import { cards, SUITS } from "../data/cards";
+import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 import { shuffle, sample } from "../utils/random";
 
-const PAIR_FIELDS = [
-  { key: "etiology", label: "Etiology" },
-  { key: "keyClue", label: "Key clue" },
-  { key: "species", label: "Species" },
-];
-
 export default function Match() {
   const navigate = useNavigate();
-  const goHome = () => navigate("/neuropath");
+  const deck = useDeck();
+  const goHome = () => navigate(deck.routePrefix);
+
+  const pairFields = [
+    { key: "etiology", label: deck.fieldLabels.etiology },
+    { key: "keyClue", label: deck.fieldLabels.keyClue },
+    { key: "species", label: deck.fieldLabels.species },
+  ];
+
   const { addXp, recordAnswer, submitHighScore, updateStreak } = useProgress();
   const [round, setRound] = useState(0);
-  const [matched, setMatched] = useState({}); // cardId -> true
+  const [matched, setMatched] = useState({});
   const [wrong, setWrong] = useState({});
   const [selectedCard, setSelectedCard] = useState(null);
-  const [field, setField] = useState(PAIR_FIELDS[0]);
+  const [field, setField] = useState(pairFields[0]);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(90);
   const [finished, setFinished] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- `round` is a manual reset trigger
-  const set = useMemo(() => sample(cards, 6), [round]);
+  const set = useMemo(() => sample(deck.cards, 6), [round, deck]);
   const leftLabels = useMemo(() => set.map((c) => ({ id: c.id, label: c.name })), [set]);
   const rightLabels = useMemo(
     () => shuffle(set.map((c) => ({ id: c.id, label: c[field.key] }))),
     [set, field]
   );
 
-  useEffect(() => {
-    updateStreak();
-  }, [updateStreak]);
+  useEffect(() => updateStreak(), [updateStreak]);
 
   useEffect(() => {
     if (finished) return;
     if (timeLeft <= 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- end-of-round terminal transition
       setFinished(true);
-      submitHighScore("match", score);
+      submitHighScore(`${deck.slug}:match`, score);
       return;
     }
     const t = setTimeout(() => setTimeLeft((x) => x - 1), 1000);
     return () => clearTimeout(t);
-  }, [timeLeft, finished, score, submitHighScore]);
+  }, [timeLeft, finished, score, submitHighScore, deck]);
 
   useEffect(() => {
     if (Object.keys(matched).length === set.length) {
@@ -58,9 +58,10 @@ export default function Match() {
         setMatched({});
         setWrong({});
         setSelectedCard(null);
-        setField(PAIR_FIELDS[Math.floor(Math.random() * PAIR_FIELDS.length)]);
+        setField(pairFields[Math.floor(Math.random() * pairFields.length)]);
       }, 700);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matched, set.length, addXp]);
 
   const handleLeft = (id) => {
@@ -71,7 +72,7 @@ export default function Match() {
   const handleRight = (id) => {
     if (matched[id] || !selectedCard) return;
     const correct = selectedCard === id;
-    recordAnswer(selectedCard, correct);
+    recordAnswer(`${deck.slug}:${selectedCard}`, correct);
     if (correct) {
       setMatched((m) => ({ ...m, [id]: true }));
       setScore((s) => s + 10);
@@ -107,8 +108,8 @@ export default function Match() {
   return (
     <ModeShell
       title="Match"
-      subtitle={`Match disease with ${field.label.toLowerCase()}`}
-            hud={
+      subtitle={`Match ${deck.prompts.identifyNoun} with ${field.label.toLowerCase()}`}
+      hud={
         <div className="flex items-center justify-between text-sm">
           <div className="text-white">
             Score: <span className="font-bold tabular-nums">{score}</span>
@@ -116,9 +117,7 @@ export default function Match() {
           <div className="flex items-center gap-2">
             <span className="text-white/50">Time</span>
             <span
-              className={`font-bold tabular-nums ${
-                timeLeft <= 10 ? "text-red-400" : "text-white"
-              }`}
+              className={`font-bold tabular-nums ${timeLeft <= 10 ? "text-red-400" : "text-white"}`}
             >
               {timeLeft}s
             </span>
@@ -129,11 +128,11 @@ export default function Match() {
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           <div className="text-xs uppercase tracking-wider text-white/40 mb-1">
-            Disease
+            {deck.prompts.identifyNoun.charAt(0).toUpperCase() + deck.prompts.identifyNoun.slice(1)}
           </div>
           {leftLabels.map((l) => {
-            const c = cards.find((x) => x.id === l.id);
-            const suit = SUITS[c.suit];
+            const c = deck.cards.find((x) => x.id === l.id);
+            const suit = deck.suits[c.suit];
             const isMatched = matched[l.id];
             const isSelected = selectedCard === l.id;
             return (
@@ -159,9 +158,7 @@ export default function Match() {
         </div>
 
         <div className="space-y-2">
-          <div className="text-xs uppercase tracking-wider text-white/40 mb-1">
-            {field.label}
-          </div>
+          <div className="text-xs uppercase tracking-wider text-white/40 mb-1">{field.label}</div>
           {rightLabels.map((l) => {
             const isMatched = matched[l.id];
             const isWrong = wrong[l.id];

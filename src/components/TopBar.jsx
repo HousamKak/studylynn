@@ -13,7 +13,7 @@ export default function TopBar() {
         >
           <span className="text-2xl">📚</span>
           <span className="font-display text-xl font-bold text-white">
-            study<span className="text-violet-400">.lynnhamad</span>
+            study<span className="text-violet-400">lynn</span>
           </span>
         </Link>
 

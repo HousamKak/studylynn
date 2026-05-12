@@ -3,19 +3,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
-import { cards, SUITS } from "../data/cards";
+import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 import { shuffle } from "../utils/random";
 
 export default function Sort() {
   const navigate = useNavigate();
-  const goHome = () => navigate("/neuropath");
+  const deck = useDeck();
+  const goHome = () => navigate(deck.routePrefix);
+
   const { recordAnswer, addXp, submitHighScore, updateStreak } = useProgress();
-  const queue = useMemo(() => shuffle([...cards]), []);
+  const queue = useMemo(() => shuffle([...deck.cards]), [deck]);
   const [i, setI] = useState(0);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [feedback, setFeedback] = useState(null); // {ok, suit}
+  const [feedback, setFeedback] = useState(null);
   const [finished, setFinished] = useState(false);
 
   useEffect(() => updateStreak(), [updateStreak]);
@@ -25,18 +27,18 @@ export default function Sort() {
     if (timeLeft <= 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- end-of-round terminal transition
       setFinished(true);
-      submitHighScore("sort", score);
+      submitHighScore(`${deck.slug}:sort`, score);
       return;
     }
     const t = setTimeout(() => setTimeLeft((x) => x - 1), 1000);
     return () => clearTimeout(t);
-  }, [timeLeft, finished, score, submitHighScore]);
+  }, [timeLeft, finished, score, submitHighScore, deck]);
 
   const card = queue[i];
 
   const place = (suit) => {
     const correct = card.suit === suit;
-    recordAnswer(card.id, correct);
+    recordAnswer(`${deck.slug}:${card.id}`, correct);
     setFeedback({ ok: correct, suit });
     if (correct) {
       setScore((s) => s + 5);
@@ -53,7 +55,6 @@ export default function Sort() {
   };
 
   if (finished) {
-    submitHighScore("sort", score);
     if (score > 50) confetti({ particleCount: 100, spread: 80 });
     return (
       <ModeShell title="Sort">
@@ -78,7 +79,7 @@ export default function Sort() {
     <ModeShell
       title="Sort"
       subtitle="Drop each card into its category. +1s correct / −2s wrong."
-            hud={
+      hud={
         <div className="flex items-center justify-between text-sm">
           <div className="text-white">
             Score: <span className="font-bold tabular-nums">{score}</span>
@@ -86,9 +87,7 @@ export default function Sort() {
           <div className="flex items-center gap-2">
             <span className="text-white/50">Time</span>
             <span
-              className={`font-bold tabular-nums ${
-                timeLeft <= 10 ? "text-red-400" : "text-white"
-              }`}
+              className={`font-bold tabular-nums ${timeLeft <= 10 ? "text-red-400" : "text-white"}`}
             >
               {timeLeft}s
             </span>
@@ -110,15 +109,13 @@ export default function Sort() {
           transition={{ duration: feedback ? 0.35 : 0.2 }}
           className="card p-6 mb-6 min-h-[160px] flex flex-col items-center justify-center text-center"
         >
-          <div className="font-display text-3xl font-bold text-white mb-2">
-            {card.name}
-          </div>
+          <div className="font-display text-3xl font-bold text-white mb-2">{card.name}</div>
           <div className="text-white/60 text-sm">{card.species}</div>
         </motion.div>
       </AnimatePresence>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {Object.entries(SUITS).map(([key, s]) => (
+        {Object.entries(deck.suits).map(([key, s]) => (
           <button
             key={key}
             onClick={() => place(key)}

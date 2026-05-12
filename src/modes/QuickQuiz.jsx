@@ -3,17 +3,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
-import { generateQuestionSet } from "../utils/questions";
-import { cardById, SUITS } from "../data/cards";
+import { generateQuestionSet, cardLookupFn } from "../utils/questions";
+import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 
 const TOTAL = 10;
 
 export default function QuickQuiz() {
   const navigate = useNavigate();
-  const goHome = () => navigate("/neuropath");
+  const deck = useDeck();
+  const goHome = () => navigate(deck.routePrefix);
+  const cardById = cardLookupFn(deck);
+
   const { recordAnswer, addXp, submitHighScore, updateStreak } = useProgress();
-  const questions = useMemo(() => generateQuestionSet(TOTAL), []);
+  const questions = useMemo(() => generateQuestionSet(deck, TOTAL), [deck]);
   const [i, setI] = useState(0);
   const [selected, setSelected] = useState(null);
   const [score, setScore] = useState(0);
@@ -22,26 +25,22 @@ export default function QuickQuiz() {
 
   const q = questions[i];
   const card = q ? cardById(q.cardId) : null;
-  const suit = card ? SUITS[card.suit] : null;
+  const suit = card ? deck.suits[card.suit] : null;
 
-  useEffect(() => {
-    updateStreak();
-  }, [updateStreak]);
+  useEffect(() => updateStreak(), [updateStreak]);
 
   const pick = (idx) => {
     if (selected !== null) return;
     setSelected(idx);
     const correct = idx === q.answerIndex;
-    recordAnswer(q.cardId, correct);
+    recordAnswer(`${deck.slug}:${q.cardId}`, correct);
     if (correct) {
       const newStreak = streak + 1;
       const points = 10 + newStreak * 2;
       setScore((s) => s + points);
       setStreak(newStreak);
       addXp(points);
-      if (newStreak >= 3) {
-        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-      }
+      if (newStreak >= 3) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
     } else {
       setStreak(0);
     }
@@ -49,7 +48,7 @@ export default function QuickQuiz() {
 
   const next = () => {
     if (i + 1 >= TOTAL) {
-      submitHighScore("quickQuiz", score);
+      submitHighScore(`${deck.slug}:quickQuiz`, score);
       setFinished(true);
       confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
     } else {
@@ -63,11 +62,9 @@ export default function QuickQuiz() {
       <ModeShell title="Quick Quiz">
         <div className="text-center py-10">
           <div className="text-6xl mb-4">🎉</div>
-          <div className="font-display text-4xl font-bold text-white">
-            {score} XP
-          </div>
+          <div className="font-display text-4xl font-bold text-white">{score} XP</div>
           <div className="text-white/60 mt-2">
-            You got {score > 0 ? Math.min(TOTAL, Math.ceil(score / 10)) : 0} of {TOTAL} questions
+            You got {score > 0 ? Math.min(TOTAL, Math.ceil(score / 10)) : 0} of {TOTAL}
           </div>
           <div className="mt-8 flex gap-3 justify-center">
             <button className="btn-primary" onClick={() => window.location.reload()}>
@@ -86,7 +83,7 @@ export default function QuickQuiz() {
     <ModeShell
       title="Quick Quiz"
       subtitle={`Question ${i + 1} of ${TOTAL}`}
-            hud={
+      hud={
         <div className="flex items-center gap-4">
           <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
             <motion.div
@@ -96,9 +93,7 @@ export default function QuickQuiz() {
           </div>
           <div className="flex items-center gap-3 text-sm">
             <span className="text-white font-semibold tabular-nums">{score} XP</span>
-            {streak >= 2 && (
-              <span className="text-orange-400 font-semibold">🔥 ×{streak}</span>
-            )}
+            {streak >= 2 && <span className="text-orange-400 font-semibold">🔥 ×{streak}</span>}
           </div>
         </div>
       }
@@ -117,9 +112,7 @@ export default function QuickQuiz() {
             </div>
           )}
           <div className="card p-6 mb-6">
-            <p className="text-white text-lg leading-relaxed whitespace-pre-wrap">
-              {q.prompt}
-            </p>
+            <p className="text-white text-lg leading-relaxed whitespace-pre-wrap">{q.prompt}</p>
           </div>
 
           <div className="space-y-3">
@@ -127,7 +120,8 @@ export default function QuickQuiz() {
               const isCorrect = idx === q.answerIndex;
               const isSelected = idx === selected;
               const showResult = selected !== null;
-              let cls = "card p-4 cursor-pointer text-left text-white hover:border-white/30 transition";
+              let cls =
+                "card p-4 cursor-pointer text-left text-white hover:border-white/30 transition";
               if (showResult) {
                 if (isCorrect) cls += " !border-green-500 !bg-green-500/10";
                 else if (isSelected) cls += " !border-red-500 !bg-red-500/10";
@@ -148,7 +142,9 @@ export default function QuickQuiz() {
                     </div>
                     <div className="flex-1">{opt}</div>
                     {showResult && isCorrect && <span className="text-green-400">✓</span>}
-                    {showResult && isSelected && !isCorrect && <span className="text-red-400">✗</span>}
+                    {showResult && isSelected && !isCorrect && (
+                      <span className="text-red-400">✗</span>
+                    )}
                   </div>
                 </motion.button>
               );
@@ -165,10 +161,24 @@ export default function QuickQuiz() {
                 About {card.name}
               </div>
               <div className="space-y-2 text-sm text-white/80">
-                <div><span className="text-white/40">Etiology:</span> {card.etiology}</div>
-                <div><span className="text-white/40">Species:</span> {card.species}</div>
-                <div><span className="text-white/40">Key clue:</span> {card.keyClue}</div>
-                {card.pearls && <div><span className="text-white/40">Pearl:</span> {card.pearls}</div>}
+                <div>
+                  <span className="text-white/40">{deck.fieldLabels.etiology}:</span>{" "}
+                  {card.etiology}
+                </div>
+                <div>
+                  <span className="text-white/40">{deck.fieldLabels.species}:</span>{" "}
+                  {card.species}
+                </div>
+                <div>
+                  <span className="text-white/40">{deck.fieldLabels.keyClue}:</span>{" "}
+                  {card.keyClue}
+                </div>
+                {card.pearls && (
+                  <div>
+                    <span className="text-white/40">{deck.fieldLabels.pearls}:</span>{" "}
+                    {card.pearls}
+                  </div>
+                )}
               </div>
               <button className="btn-primary mt-4 w-full" onClick={next}>
                 {i + 1 >= TOTAL ? "See results" : "Next question →"}

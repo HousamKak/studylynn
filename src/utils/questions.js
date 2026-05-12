@@ -1,7 +1,4 @@
-import { cards } from "../data/cards";
 import { shuffle, pick, pickN } from "./random";
-
-// Question generators produce { id, prompt, options, answerIndex, cardId, type }
 
 const QUESTION_TYPES = [
   "identifyFromClue",
@@ -11,8 +8,7 @@ const QUESTION_TYPES = [
   "keyClueOf",
 ];
 
-const distractorsFor = (card, field, n = 3) => {
-  // Prefer same-suit cards for plausible distractors
+const distractorsFor = (cards, card, field, n = 3) => {
   const sameSuit = cards.filter(
     (c) => c.id !== card.id && c.suit === card.suit && c[field] && c[field] !== card[field]
   );
@@ -23,13 +19,10 @@ const distractorsFor = (card, field, n = 3) => {
     );
     pool = [...pool, ...others];
   }
-  return pickN(
-    pool.map((c) => c[field]),
-    n
-  );
+  return pickN(pool.map((c) => c[field]), n);
 };
 
-const distractorNames = (card, n = 3) => {
+const distractorNames = (cards, card, n = 3) => {
   const sameSuit = cards.filter((c) => c.id !== card.id && c.suit === card.suit);
   let pool = sameSuit;
   if (pool.length < n) {
@@ -38,13 +31,14 @@ const distractorNames = (card, n = 3) => {
   return pickN(pool.map((c) => c.name), n);
 };
 
-const buildMcq = (card, type) => {
+const buildMcq = (deck, card, type) => {
+  const { cards, fieldLabels, prompts } = deck;
   switch (type) {
     case "identifyFromClue": {
-      const distractors = distractorNames(card, 3);
+      const distractors = distractorNames(cards, card, 3);
       const opts = shuffle([card.name, ...distractors]);
       return {
-        prompt: `Which disease matches this clue?\n\n"${card.keyClue}"`,
+        prompt: `Which ${prompts.identifyNoun} matches this clue?\n\n"${card.keyClue}"`,
         options: opts,
         answerIndex: opts.indexOf(card.name),
         cardId: card.id,
@@ -52,10 +46,10 @@ const buildMcq = (card, type) => {
       };
     }
     case "identifyFromMechanism": {
-      const distractors = distractorNames(card, 3);
+      const distractors = distractorNames(cards, card, 3);
       const opts = shuffle([card.name, ...distractors]);
       return {
-        prompt: `Which disease has this mechanism?\n\n"${card.mechanism}"`,
+        prompt: `Which ${prompts.identifyNoun} has this mechanism?\n\n"${card.mechanism}"`,
         options: opts,
         answerIndex: opts.indexOf(card.name),
         cardId: card.id,
@@ -63,10 +57,10 @@ const buildMcq = (card, type) => {
       };
     }
     case "etiologyOf": {
-      const distractors = distractorsFor(card, "etiology", 3);
+      const distractors = distractorsFor(cards, card, "etiology", 3);
       const opts = shuffle([card.etiology, ...distractors]);
       return {
-        prompt: `What is the etiology of ${card.name}?`,
+        prompt: `What is the ${fieldLabels.etiology.toLowerCase()} of ${card.name}?`,
         options: opts,
         answerIndex: opts.indexOf(card.etiology),
         cardId: card.id,
@@ -74,10 +68,10 @@ const buildMcq = (card, type) => {
       };
     }
     case "speciesOf": {
-      const distractors = distractorsFor(card, "species", 3);
+      const distractors = distractorsFor(cards, card, "species", 3);
       const opts = shuffle([card.species, ...distractors]);
       return {
-        prompt: `${card.name} affects which species?`,
+        prompt: `${card.name} ${prompts.affectsVerb}?`,
         options: opts,
         answerIndex: opts.indexOf(card.species),
         cardId: card.id,
@@ -85,10 +79,10 @@ const buildMcq = (card, type) => {
       };
     }
     case "keyClueOf": {
-      const distractors = distractorsFor(card, "keyClue", 3);
+      const distractors = distractorsFor(cards, card, "keyClue", 3);
       const opts = shuffle([card.keyClue, ...distractors]);
       return {
-        prompt: `Pick the KEY CLUE / pathognomonic feature of ${card.name}:`,
+        prompt: `Pick the ${prompts.keyClueNoun} of ${card.name}:`,
         options: opts,
         answerIndex: opts.indexOf(card.keyClue),
         cardId: card.id,
@@ -100,17 +94,19 @@ const buildMcq = (card, type) => {
   }
 };
 
-export const generateMcq = (card = null, type = null) => {
-  const c = card || pick(cards);
+export const generateMcq = (deck, card = null, type = null) => {
+  const c = card || pick(deck.cards);
   const t = type || pick(QUESTION_TYPES);
-  return buildMcq(c, t);
+  return buildMcq(deck, c, t);
 };
 
-export const generateQuestionSet = (n, opts = {}) => {
+export const generateQuestionSet = (deck, n, opts = {}) => {
   const { suit = null, tier = null } = opts;
-  const pool = cards.filter(
+  const pool = deck.cards.filter(
     (c) => (suit ? c.suit === suit : true) && (tier ? c.tier === tier : true)
   );
   const picks = shuffle(pool).slice(0, n);
-  return picks.map((c) => generateMcq(c));
+  return picks.map((c) => generateMcq(deck, c));
 };
+
+export const cardLookupFn = (deck) => (id) => deck.cards.find((c) => c.id === id);

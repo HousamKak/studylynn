@@ -1,6 +1,17 @@
-# Neuropath.lab
+# studylynn
 
-A gamified study app for veterinary neuropathology, built from a single student notebook. 77 disease cards across 6 categories, 6 game modes.
+Lynn's gamified study hub. A single SPA that hosts one or more subject "games" — each with its own deck of cards, modes, and progress tracking. Deployed to [study.lynnhamad.com](https://study.lynnhamad.com).
+
+## Subjects
+
+| Subject | Cards | Modes |
+|---|---|---|
+| Veterinary Neuropathology | 77 | 6 |
+
+To add another subject:
+1. Append an entry to `src/data/subjects.js`.
+2. Add the subject's data file and home component under `src/subjects/`.
+3. Wire its routes in `src/App.jsx`.
 
 ## Modes
 

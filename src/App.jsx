@@ -1,14 +1,37 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import TopBar from "./components/TopBar";
 import Hub from "./components/Hub";
-import NeuropathHome from "./subjects/NeuropathHome";
+import SubjectHome from "./subjects/SubjectHome";
+import { DeckProvider } from "./state/deckContext";
+import { subjectBySlug } from "./data/subjects";
 import QuickQuiz from "./modes/QuickQuiz";
 import Flashcards from "./modes/Flashcards";
 import Match from "./modes/Match";
 import Sort from "./modes/Sort";
 import BossBattle from "./modes/BossBattle";
 import Diagnose from "./modes/Diagnose";
+
+const MODE_COMPONENTS = {
+  quiz: QuickQuiz,
+  flashcards: Flashcards,
+  match: Match,
+  sort: Sort,
+  boss: BossBattle,
+  diagnose: Diagnose,
+};
+
+function SubjectRouter() {
+  const { subject, mode } = useParams();
+  if (!subjectBySlug(subject)) return <Navigate to="/" replace />;
+  if (mode && !MODE_COMPONENTS[mode]) return <Navigate to={`/${subject}`} replace />;
+  const Body = mode ? MODE_COMPONENTS[mode] : SubjectHome;
+  return (
+    <DeckProvider slug={subject}>
+      <Body />
+    </DeckProvider>
+  );
+}
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -23,13 +46,8 @@ function AnimatedRoutes() {
       >
         <Routes location={location}>
           <Route path="/" element={<Hub />} />
-          <Route path="/neuropath" element={<NeuropathHome />} />
-          <Route path="/neuropath/quiz" element={<QuickQuiz />} />
-          <Route path="/neuropath/flashcards" element={<Flashcards />} />
-          <Route path="/neuropath/match" element={<Match />} />
-          <Route path="/neuropath/sort" element={<Sort />} />
-          <Route path="/neuropath/boss" element={<BossBattle />} />
-          <Route path="/neuropath/diagnose" element={<Diagnose />} />
+          <Route path="/:subject" element={<SubjectRouter />} />
+          <Route path="/:subject/:mode" element={<SubjectRouter />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </motion.main>
@@ -38,7 +56,6 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
-  // import.meta.env.BASE_URL is "/" for root-served (custom domain) and "/neuropath-game/" for default GH Pages.
   const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
   return (
     <BrowserRouter basename={basename}>

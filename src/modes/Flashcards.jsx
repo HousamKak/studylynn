@@ -1,52 +1,50 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ModeShell from "../components/ModeShell";
-import { cards, SUITS } from "../data/cards";
+import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 import { shuffle } from "../utils/random";
 
 export default function Flashcards() {
+  const deck = useDeck();
   const { state, recordAnswer, addXp, updateStreak } = useProgress();
 
-  // Deck ordering: untouched + weak first, then learning, mastered last
-  const deck = useMemo(() => {
+  // Order weakest first.
+  const orderedDeck = useMemo(() => {
     const score = (c) => {
-      const m = state.mastery[c.id];
+      const m = state.mastery[`${deck.slug}:${c.id}`];
       if (!m || m.reps === 0) return 0;
       const ratio = m.correct / m.reps;
       if (ratio < 0.6) return 1;
       if (ratio < 0.85) return 2;
       return 3;
     };
-    return shuffle([...cards]).sort((a, b) => score(a) - score(b));
-  }, [state.mastery]);
+    return shuffle([...deck.cards]).sort((a, b) => score(a) - score(b));
+  }, [state.mastery, deck]);
 
   const [i, setI] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  useEffect(() => {
-    updateStreak();
-  }, [updateStreak]);
+  useEffect(() => updateStreak(), [updateStreak]);
 
-  const c = deck[i];
-  const suit = c ? SUITS[c.suit] : null;
-  const m = state.mastery[c?.id];
+  const c = orderedDeck[i];
+  const suit = c ? deck.suits[c.suit] : null;
+  const m = state.mastery[`${deck.slug}:${c?.id}`];
 
   const grade = (g) => {
-    // g: 'again' | 'good' | 'easy'
     const correct = g !== "again";
-    recordAnswer(c.id, correct);
+    recordAnswer(`${deck.slug}:${c.id}`, correct);
     if (g === "easy") addXp(8);
     else if (g === "good") addXp(4);
-    setI((x) => (x + 1) % deck.length);
+    setI((x) => (x + 1) % orderedDeck.length);
     setFlipped(false);
   };
 
   return (
     <ModeShell
       title="Flashcards"
-      subtitle={`Card ${i + 1} of ${deck.length} — weakest first`}
-          >
+      subtitle={`Card ${i + 1} of ${orderedDeck.length} — weakest first`}
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={i + (flipped ? "-back" : "-front")}
@@ -70,19 +68,17 @@ export default function Flashcards() {
             <div className="flex-1 flex flex-col items-center justify-center text-center">
               {!flipped ? (
                 <>
-                  <div className="font-display text-4xl font-bold text-white mb-3">
-                    {c.name}
-                  </div>
-                  <div className="text-white/50">Recall etiology, mechanism, key clue.</div>
+                  <div className="font-display text-4xl font-bold text-white mb-3">{c.name}</div>
+                  <div className="text-white/50">Recall {deck.fieldLabels.etiology.toLowerCase()}, mechanism, key clue.</div>
                 </>
               ) : (
                 <div className="text-left w-full space-y-3 text-white/90">
-                  <Field label="Etiology" value={c.etiology} />
-                  <Field label="Species" value={c.species} />
-                  <Field label="Mechanism" value={c.mechanism} />
-                  <Field label="Lesions" value={c.lesions} />
-                  <Field label="Key clue" value={c.keyClue} accent="text-yellow-300" />
-                  {c.pearls && <Field label="Pearl" value={c.pearls} />}
+                  <Field label={deck.fieldLabels.etiology} value={c.etiology} />
+                  <Field label={deck.fieldLabels.species} value={c.species} />
+                  <Field label={deck.fieldLabels.mechanism} value={c.mechanism} />
+                  <Field label={deck.fieldLabels.lesions} value={c.lesions} />
+                  <Field label={deck.fieldLabels.keyClue} value={c.keyClue} accent="text-yellow-300" />
+                  {c.pearls && <Field label={deck.fieldLabels.pearls} value={c.pearls} />}
                 </div>
               )}
             </div>
