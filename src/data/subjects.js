@@ -25,6 +25,18 @@ export const subjects = [
     modes: 6,
     cards: 70,
   },
+  {
+    slug: "oral",
+    title: "Oral Cavity Pathology",
+    blurb:
+      "Congenital anomalies, systemic markers, viral/bacterial/fungal stomatitis, immune lesions, and oral neoplasia with staging.",
+    color: "#ec4899",
+    gradient: "from-pink-500/40 to-rose-500/30",
+    emoji: "🦷",
+    status: "ready",
+    modes: 6,
+    cards: 29,
+  },
 ];
 
 export const subjectBySlug = (slug) => subjects.find((s) => s.slug === slug);
