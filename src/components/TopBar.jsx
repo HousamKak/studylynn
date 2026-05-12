@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Flame, ChevronRight, Star } from "lucide-react";
+import { Flame, ChevronRight } from "lucide-react";
 import { useProgress } from "../state/progress";
 import { subjects } from "../data/subjects";
 
@@ -18,30 +18,28 @@ export default function TopBar() {
   });
 
   const pct = Math.min(100, progressToNext * 100);
+  const lastCrumb = crumbs[crumbs.length - 1];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/5 bg-ink-950/70 backdrop-blur-xl supports-[backdrop-filter]:bg-ink-950/60">
-      {/* Aurora strip behind the bar */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 100% at 0% 50%, rgba(139,92,246,0.18), transparent 70%), radial-gradient(ellipse 60% 100% at 100% 50%, rgba(217,70,239,0.14), transparent 70%)",
-        }}
-      />
-      <div className="relative max-w-6xl mx-auto px-5 h-16 flex items-center gap-4">
+    <header className="sticky top-0 z-40 border-b border-white/5 bg-ink-950/85 backdrop-blur-md supports-[backdrop-filter]:bg-ink-950/65">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
         {/* Brand */}
-        <Link to="/" className="flex items-center gap-2.5 group focus-ring rounded-lg">
-          <span className="relative inline-flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-70 animate-ping-slow" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-fuchsia-400 shadow-[0_0_10px_rgba(217,70,239,0.8)]" />
-          </span>
-          <span className="font-display text-lg sm:text-xl font-bold tracking-tight">
+        <Link to="/" className="flex items-center gap-2 focus-ring rounded-md shrink-0">
+          <span className="inline-block w-2 h-2 rounded-full bg-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.7)]" />
+          <span className="font-display text-base sm:text-lg font-bold tracking-tight">
             <span className="brand-text">studylynn</span>
           </span>
         </Link>
 
-        {/* Crumbs */}
+        {/* Mobile: show last crumb only */}
+        {lastCrumb && (
+          <nav className="flex sm:hidden items-center gap-1 text-xs min-w-0 flex-1">
+            <ChevronRight size={12} className="text-white/30 shrink-0" />
+            <span className="text-white truncate font-medium">{lastCrumb}</span>
+          </nav>
+        )}
+
+        {/* Desktop: full crumbs */}
         {crumbs.length > 0 && (
           <nav className="hidden sm:flex items-center gap-1.5 text-xs min-w-0">
             <ChevronRight size={12} className="text-white/30" />
@@ -64,40 +62,24 @@ export default function TopBar() {
           </nav>
         )}
 
-        <div className="flex-1" />
+        <div className="flex-1 hidden sm:block" />
 
-        {/* HUD */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* HUD — compact, mobile and desktop */}
+        <div className="flex items-center gap-2 shrink-0">
           {/* Streak */}
-          <div className="flex items-center gap-1.5 chip bg-orange-500/10 border border-orange-500/30 text-orange-200">
-            <Flame
-              size={14}
-              className={`text-orange-400 ${
-                state.streak > 0 ? "animate-pulse-glow" : ""
-              }`}
-            />
-            <span className="stat-num text-orange-100">{state.streak}</span>
-            <span className="text-orange-200/70 text-[11px]">
-              day{state.streak === 1 ? "" : "s"}
-            </span>
-          </div>
-
-          <div className="hairline-v h-6" />
-
-          {/* Level gem */}
-          <div className="flex items-center gap-2.5">
-            <div className="gem w-9 h-9 text-white text-sm font-bold flex flex-col items-center justify-center leading-none">
-              <span className="relative z-10 stat-num text-[14px]">{level}</span>
-              <Star
-                size={8}
-                className="absolute -top-0.5 -right-0.5 text-amber-200 fill-amber-300 drop-shadow"
-              />
+          {state.streak > 0 && (
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/25 text-orange-200">
+              <Flame size={12} className="text-orange-400" />
+              <span className="stat-num text-[11px]">{state.streak}</span>
             </div>
+          )}
 
-            {/* XP bar */}
-            <div className="flex flex-col gap-1 w-36">
+          {/* Level + XP — XP bar hidden on small screens */}
+          <div className="flex items-center gap-2">
+            <div className="gem w-8 h-8 text-[13px] leading-none">{level}</div>
+            <div className="hidden md:flex flex-col gap-1 w-28">
               <div className="flex items-center justify-between text-[10px] leading-none">
-                <span className="label-mono !text-[10px] text-ink-300">XP</span>
+                <span className="text-ink-300 font-mono uppercase tracking-wider">XP</span>
                 <span className="stat-num text-white">
                   {xpInLevel}
                   <span className="text-ink-400 font-normal">/{xpToNext}</span>
@@ -107,25 +89,12 @@ export default function TopBar() {
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
                   className="xp-fill"
                 />
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile mini HUD */}
-        <div className="flex md:hidden items-center gap-2">
-          <div className="gem w-8 h-8 text-white text-xs font-bold flex items-center justify-center">
-            <span className="relative z-10 stat-num">{level}</span>
-          </div>
-          {state.streak > 0 && (
-            <div className="chip bg-orange-500/10 border border-orange-500/30 text-orange-200 !px-2 !py-0.5">
-              <Flame size={12} className="text-orange-400" />
-              <span className="stat-num text-[11px]">{state.streak}</span>
-            </div>
-          )}
         </div>
       </div>
     </header>

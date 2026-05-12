@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -11,26 +11,17 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Cosmic studylynn palette */
   --bg: #070815;
   --bg-elev: #0b0d1e;
   --surface: #13162a;
-  --surface-2: #1c2038;
   --border: #2a2f47;
-  --border-strong: #3f4564;
   --text: #ecedf5;
   --text-muted: #a1a6c2;
   --text-faint: #7a809e;
 
   --brand-400: #a78bfa;
   --brand-500: #8b5cf6;
-  --brand-600: #7c3aed;
   --magenta-500: #d946ef;
-  --cyan-400: #22d3ee;
-  --amber-400: #fbbf24;
-  --good: #34d399;
-  --warn: #fbbf24;
-  --bad: #f87171;
 }
 
 html,
@@ -38,42 +29,40 @@ body,
 #root {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.55;
 }
 
-/* Living cosmic background — aurora behind everything */
+/* Single soft aurora — far less intense than before */
 body {
   position: relative;
   background-color: var(--bg);
   background-image:
-    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(139, 92, 246, 0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 90% 10%, rgba(217, 70, 239, 0.16) 0%, transparent 60%),
-    radial-gradient(ellipse 90% 70% at 50% 110%, rgba(34, 211, 238, 0.12) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139, 92, 246, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 110%, rgba(217, 70, 239, 0.10) 0%, transparent 60%);
   background-attachment: fixed;
 }
 
-/* Twinkling starfield overlay — subtle, no JS needed */
+/* Very subtle starfield — desktop only, fades on mobile */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(1px 1px at 12% 22%, rgba(255, 255, 255, 0.5), transparent 50%),
-    radial-gradient(1px 1px at 27% 65%, rgba(255, 255, 255, 0.35), transparent 50%),
-    radial-gradient(1px 1px at 43% 17%, rgba(255, 255, 255, 0.4), transparent 50%),
-    radial-gradient(1px 1px at 58% 80%, rgba(255, 255, 255, 0.3), transparent 50%),
-    radial-gradient(1.5px 1.5px at 73% 33%, rgba(255, 255, 255, 0.55), transparent 50%),
-    radial-gradient(1px 1px at 88% 70%, rgba(255, 255, 255, 0.35), transparent 50%),
-    radial-gradient(1px 1px at 6% 88%, rgba(255, 255, 255, 0.4), transparent 50%),
-    radial-gradient(1px 1px at 95% 14%, rgba(255, 255, 255, 0.45), transparent 50%);
-  background-size: 100% 100%;
-  opacity: 0.6;
+    radial-gradient(1px 1px at 25% 30%, rgba(255, 255, 255, 0.35), transparent 50%),
+    radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.3), transparent 50%),
+    radial-gradient(1.5px 1.5px at 80% 20%, rgba(255, 255, 255, 0.4), transparent 50%),
+    radial-gradient(1px 1px at 15% 80%, rgba(255, 255, 255, 0.3), transparent 50%);
+  opacity: 0.4;
   z-index: 0;
+}
+
+@media (max-width: 640px) {
+  body::before { opacity: 0; }
 }
 
 #root {
@@ -89,20 +78,16 @@ body::before {
 @layer components {
   /* Buttons */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-medium transition-all active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-medium transition-colors active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed;
+    min-height: 44px;
   }
   .btn-primary {
-    @apply btn text-white border;
+    @apply btn text-white border border-white/10;
     background-image: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
-    border-color: rgba(217, 70, 239, 0.5);
-    box-shadow: 0 10px 28px -10px rgba(139, 92, 246, 0.65),
-      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    box-shadow: 0 6px 20px -8px rgba(139, 92, 246, 0.55);
   }
   .btn-primary:hover {
-    filter: brightness(1.08);
-    box-shadow: 0 16px 36px -10px rgba(217, 70, 239, 0.7),
-      0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-    transform: translateY(-1px);
+    filter: brightness(1.06);
   }
   .btn-ghost {
     @apply btn border;
@@ -112,7 +97,7 @@ body::before {
   }
   .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.15);
   }
   .btn-danger {
     @apply btn text-red-200 border border-red-500/40;
@@ -122,67 +107,40 @@ body::before {
     background: rgba(239, 68, 68, 0.22);
   }
 
-  /* Glass panels */
+  /* Panels */
   .panel {
     @apply rounded-2xl border;
     background: rgba(255, 255, 255, 0.03);
     border-color: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(8px);
   }
   .panel-elev {
-    @apply rounded-2xl border relative;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    border-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 20px 50px -25px rgba(0, 0, 0, 0.6),
-      0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+    @apply rounded-2xl border;
+    background: rgba(255, 255, 255, 0.035);
+    border-color: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 12px 30px -18px rgba(0, 0, 0, 0.6);
   }
   .panel-hover {
-    @apply transition-all duration-200;
+    @apply transition-colors duration-200;
   }
   .panel-hover:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.18);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.055);
+    border-color: rgba(255, 255, 255, 0.16);
   }
 
-  /* Trading card — a beefier panel with internal gradient & sheen */
+  /* Trading card — quieter version: gentle lift, one subtle glow, no shine sweep */
   .trading-card {
-    @apply relative rounded-3xl border overflow-hidden;
+    @apply relative rounded-2xl border overflow-hidden transition-all duration-200;
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.8),
-      0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-    transition: transform 0.25s ease, box-shadow 0.25s ease,
-      border-color 0.25s ease;
+    box-shadow: 0 12px 30px -18px rgba(0, 0, 0, 0.7);
   }
-  .trading-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      120deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.06) 50%,
-      transparent 70%
-    );
-    background-size: 200% 100%;
-    background-position: -200% 0;
-    transition: background-position 0.6s ease;
+  @media (hover: hover) {
+    .trading-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
   }
-  .trading-card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow: 0 40px 80px -25px rgba(0, 0, 0, 0.9),
-      0 0 60px -10px rgba(217, 70, 239, 0.35),
-      0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-  }
-  .trading-card:hover::before {
-    background-position: 200% 0;
+  .trading-card:active {
+    transform: scale(0.99);
   }
 
   /* Pills & chips */
@@ -190,11 +148,11 @@ body::before {
     @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider border;
   }
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium;
   }
 
   .label-mono {
-    @apply font-mono text-[11px] uppercase tracking-[0.14em] text-ink-200;
+    @apply font-mono text-[11px] uppercase tracking-[0.12em] text-ink-300;
   }
 
   .stat-num {
@@ -203,105 +161,58 @@ body::before {
   }
 
   .hairline {
-    @apply h-px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.12),
-      transparent
-    );
+    @apply h-px bg-white/10;
   }
   .hairline-v {
     @apply w-px bg-white/10;
   }
 
-  /* XP bar with animated shimmer */
+  /* XP track — single subtle animation: gradient slide. No shimmer overlay. */
   .xp-track {
-    @apply relative h-2 rounded-full overflow-hidden border border-white/5;
-    background: rgba(255, 255, 255, 0.05);
+    @apply relative h-1.5 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.06);
   }
   .xp-fill {
-    @apply h-full rounded-full relative overflow-hidden;
-    background-image: linear-gradient(
-      90deg,
-      #8b5cf6 0%,
-      #d946ef 50%,
-      #f59e0b 100%
-    );
-    background-size: 200% 100%;
-    animation: gradient-shift 6s ease infinite;
-    box-shadow: 0 0 16px rgba(217, 70, 239, 0.55);
-  }
-  .xp-fill::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.6) 50%,
-      transparent 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2.6s linear infinite;
+    @apply h-full rounded-full;
+    background-image: linear-gradient(90deg, #8b5cf6 0%, #d946ef 100%);
+    box-shadow: 0 0 8px rgba(217, 70, 239, 0.35);
   }
 
-  /* Brand wordmark — gradient text */
+  /* Brand wordmark — static gradient (no animation) */
   .brand-text {
-    background-image: linear-gradient(
-      120deg,
-      #a78bfa 0%,
-      #d946ef 50%,
-      #f59e0b 100%
-    );
-    background-size: 200% auto;
+    background-image: linear-gradient(120deg, #a78bfa 0%, #d946ef 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: gradient-shift 8s ease infinite;
   }
 
-  /* Glowing badge for level/streak */
+  /* Level gem — flat, no decorative inner highlight loop */
   .gem {
-    @apply relative inline-flex items-center justify-center rounded-xl;
+    @apply relative inline-flex items-center justify-center rounded-lg text-white font-bold;
     background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
-    box-shadow: 0 8px 22px -6px rgba(139, 92, 246, 0.7),
-      0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-  }
-  .gem::after {
-    content: "";
-    position: absolute;
-    inset: 1px;
-    border-radius: inherit;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.18) 0%,
-      transparent 50%
-    );
-    pointer-events: none;
+    box-shadow: 0 4px 14px -4px rgba(139, 92, 246, 0.6);
   }
 
   /* Focus ring */
   .focus-ring:focus-visible {
     @apply outline-none ring-2 ring-offset-2 ring-offset-ink-950;
-    --tw-ring-color: rgba(217, 70, 239, 0.7);
+    --tw-ring-color: rgba(167, 139, 250, 0.7);
   }
 }
 
 @layer utilities {
-  .text-glow {
-    text-shadow: 0 0 20px rgba(217, 70, 239, 0.45),
-      0 0 40px rgba(139, 92, 246, 0.35);
+  .text-glow-soft {
+    text-shadow: 0 0 24px rgba(139, 92, 246, 0.3);
   }
-  .ring-glow {
-    box-shadow: 0 0 0 1px rgba(217, 70, 239, 0.5),
-      0 0 28px rgba(217, 70, 239, 0.35);
+  .divider-gradient {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   }
-  .tilt-hover {
-    transition: transform 0.25s ease;
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  .tilt-hover:hover {
-    transform: perspective(800px) rotateX(2deg) rotateY(-2deg) translateY(-4px);
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -314,18 +225,14 @@ body::before {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #2a2f47, #1c2038);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #8b5cf6, #6d28d9);
-  background-clip: padding-box;
-  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Reduced motion respect */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
