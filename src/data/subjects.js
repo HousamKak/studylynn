@@ -37,6 +37,18 @@ export const subjects = [
     modes: 6,
     cards: 29,
   },
+  {
+    slug: "gi",
+    title: "GI Pharmacology — Detailed",
+    blurb:
+      "Deep dive: gastric physiology, acid suppression, emesis control, prokinetics, antidiarrheals/IBD, laxatives. Receptor-by-receptor.",
+    color: "#22d3ee",
+    gradient: "from-cyan-500/40 to-sky-500/30",
+    emoji: "🫃",
+    status: "ready",
+    modes: 6,
+    cards: 66,
+  },
 ];
 
 export const subjectBySlug = (slug) => subjects.find((s) => s.slug === slug);
