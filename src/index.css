@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,9 +6,27 @@
 
 :root {
   color-scheme: dark;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Clinical dark palette tokens */
+  --bg: #070a0e;
+  --bg-elev: #0c1016;
+  --surface: #11161e;
+  --surface-2: #161c25;
+  --border: #1f2933;
+  --border-strong: #2a3441;
+  --text: #e7edf3;
+  --text-muted: #9fadbd;
+  --text-faint: #5d6975;
+  --teal-500: #06b6d4;
+  --teal-400: #22d3ee;
+  --teal-300: #67e8f9;
+  --good: #22c55e;
+  --warn: #f59e0b;
+  --bad: #ef4444;
 }
 
 html,
@@ -17,39 +35,107 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: radial-gradient(ellipse at top, #1a1230 0%, #0a0814 60%, #060410 100%);
-  color: #e5e4e7;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* Subtle clinical grid pattern in the page background */
+body {
+  background-image:
+    radial-gradient(circle at 20% -10%, rgba(34, 211, 238, 0.04), transparent 50%),
+    radial-gradient(circle at 80% 110%, rgba(34, 197, 94, 0.03), transparent 50%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.3);
+  color: white;
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 font-medium transition-colors active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed;
+    letter-spacing: -0.005em;
   }
   .btn-primary {
-    @apply btn bg-violet-500 hover:bg-violet-400 text-white shadow-lg shadow-violet-500/30;
+    @apply btn bg-teal-500 hover:bg-teal-400 text-ink-950 border border-teal-400;
   }
   .btn-ghost {
-    @apply btn bg-white/5 hover:bg-white/10 text-white border border-white/10;
+    @apply btn bg-ink-800/60 hover:bg-ink-700/80 text-ink-50 border border-ink-700;
   }
-  .card {
-    @apply rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-sm;
+  .btn-danger {
+    @apply btn bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/40;
   }
+
+  .panel {
+    @apply rounded-md bg-ink-800/40 border border-ink-700;
+  }
+  .panel-elev {
+    @apply rounded-md bg-ink-800 border border-ink-700;
+  }
+  .panel-hover {
+    @apply transition-colors hover:bg-ink-800/70 hover:border-ink-600;
+  }
+
   .pill {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
+    @apply inline-flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider border;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .label-mono {
+    @apply font-mono text-[11px] uppercase tracking-[0.12em] text-ink-300;
+  }
+
+  .stat-num {
+    font-feature-settings: "tnum";
+    @apply font-medium;
+  }
+
+  .hairline {
+    @apply h-px bg-ink-700;
+  }
+  .hairline-v {
+    @apply w-px bg-ink-700;
+  }
+
+  /* "Specimen" — the dense card style for serious panels */
+  .specimen {
+    @apply panel p-4 sm:p-5;
+  }
+
+  /* Focus ring is opt-in via .focus-ring or inherited from buttons */
+  .focus-ring:focus-visible {
+    @apply outline-none ring-2 ring-teal-400 ring-offset-2 ring-offset-ink-950;
   }
 }
 
+/* Scrollbars — narrow & subdued */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  background: var(--border-strong);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #3a4555;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

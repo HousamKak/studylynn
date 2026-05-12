@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Heart, HeartCrack } from "lucide-react";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { generateMcq, cardLookupFn } from "../utils/questions";
 import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
+import { SuitIcon } from "../components/icons";
 
 export default function BossBattle() {
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ export default function BossBattle() {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- end-of-round terminal transition
       setFinished(true);
       submitHighScore(`${deck.slug}:bossBattle`, score);
-      if (score >= 100) confetti({ particleCount: 200, spread: 120 });
+      if (score >= 100) confetti({ particleCount: 150, spread: 90 });
       return;
     }
     const t = setTimeout(() => setTimeLeft((x) => x - 1), 1000);
@@ -56,7 +58,7 @@ export default function BossBattle() {
     setTimeout(() => {
       setFlash(null);
       setQ(generateMcq(deck));
-    }, 250);
+    }, 200);
   };
 
   const card = cardById(q.cardId);
@@ -64,19 +66,21 @@ export default function BossBattle() {
 
   if (finished) {
     return (
-      <ModeShell title="Boss Battle">
-        <div className="text-center py-10">
-          <div className="text-6xl mb-4">{score >= 100 ? "👑" : "💀"}</div>
-          <div className="font-display text-4xl font-bold text-white">{score}</div>
-          <div className="text-white/60 mt-2">
-            {score >= 100 ? "Boss defeated." : "Try again."}
+      <ModeShell title="Boss Battle · Complete">
+        <div className="panel-elev p-8 text-center">
+          <div className="label-mono mb-2">Final score</div>
+          <div className="stat-num font-display text-5xl font-semibold text-ink-0 mb-1">
+            {score}
           </div>
-          <div className="mt-8 flex gap-3 justify-center">
-            <button className="btn-primary" onClick={() => window.location.reload()}>
+          <div className="text-ink-300 text-sm mb-6">
+            {score >= 100 ? "Boss defeated." : "Boss survived. Try again."}
+          </div>
+          <div className="flex gap-2 justify-center">
+            <button className="btn-primary text-sm" onClick={() => window.location.reload()}>
               Rematch
             </button>
-            <button className="btn-ghost" onClick={goHome}>
-              Home
+            <button className="btn-ghost text-sm" onClick={goHome}>
+              Back to subject
             </button>
           </div>
         </div>
@@ -90,74 +94,80 @@ export default function BossBattle() {
       hud={
         <div className="flex items-center justify-between gap-3">
           <div className="flex gap-1">
-            {[0, 1, 2].map((n) => (
-              <span key={n} className="text-2xl">
-                {n < lives ? "❤️" : "🖤"}
-              </span>
-            ))}
+            {[0, 1, 2].map((n) =>
+              n < lives ? (
+                <Heart key={n} size={16} className="text-red-400 fill-red-400/30" />
+              ) : (
+                <HeartCrack key={n} size={16} className="text-ink-600" />
+              )
+            )}
           </div>
-          <div className="flex-1 mx-4 h-2 bg-white/10 rounded-full overflow-hidden">
+          <div className="flex-1 mx-3 h-1.5 bg-ink-800 border border-ink-700 rounded-sm overflow-hidden">
             <motion.div
-              className={`h-full ${
-                timeLeft <= 10 ? "bg-red-500" : "bg-gradient-to-r from-violet-500 to-fuchsia-500"
-              }`}
+              className={`h-full ${timeLeft <= 10 ? "bg-red-500" : "bg-teal-500"}`}
               animate={{ width: `${(timeLeft / 60) * 100}%` }}
               transition={{ duration: 0.5 }}
             />
           </div>
           <div className="text-right">
-            <div className="text-xs text-white/50 leading-none">SCORE</div>
-            <div className="font-bold text-white tabular-nums">{score}</div>
+            <div className="label-mono">Score</div>
+            <div className="stat-num text-ink-0 leading-none">{score}</div>
           </div>
         </div>
       }
     >
       {combo >= 3 && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-3 text-orange-400 font-bold"
+          className="text-center mb-3"
         >
-          🔥 COMBO ×{combo}
+          <span className="chip bg-orange-500/15 text-orange-300 border border-orange-500/30">
+            Streak ×{combo}
+          </span>
         </motion.div>
       )}
 
       <div
-        className={`transition-colors duration-200 ${
+        className={`rounded-md transition-shadow ${
           flash === "good"
-            ? "ring-2 ring-green-500"
+            ? "ring-1 ring-green-400"
             : flash === "bad"
-            ? "ring-2 ring-red-500"
+            ? "ring-1 ring-red-400"
             : ""
-        } rounded-2xl`}
+        }`}
       >
         <AnimatePresence mode="wait">
           <motion.div
             key={q.prompt}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.15 }}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.12 }}
           >
-            <div className="pill mb-3" style={{ background: suit.color + "22", color: suit.color }}>
-              <span>{suit.emoji}</span>
-              <span>{suit.label}</span>
+            <div className="flex items-center gap-2 mb-3 text-[11px]">
+              <span className="label-mono inline-flex items-center gap-1.5" style={{ color: suit.color }}>
+                <SuitIcon deck={deck.slug} suit={card.suit} size={11} strokeWidth={2} />
+                {suit.label}
+              </span>
             </div>
-            <div className="card p-5 mb-4">
-              <p className="text-white text-base leading-relaxed whitespace-pre-wrap">{q.prompt}</p>
+            <div className="panel-elev p-4 mb-3">
+              <p className="text-ink-50 text-[14px] leading-relaxed whitespace-pre-wrap">
+                {q.prompt}
+              </p>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {q.options.map((opt, idx) => (
                 <button
                   key={idx}
                   onClick={() => pick(idx)}
-                  className="card w-full p-3 text-left text-white hover:border-white/30 transition active:scale-95"
+                  className="panel panel-hover w-full p-3 text-left focus-ring active:scale-[0.99] transition"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm font-semibold">
+                    <span className="stat-num text-[11px] text-ink-400 w-4 shrink-0">
                       {String.fromCharCode(65 + idx)}
-                    </div>
-                    <span className="flex-1 text-sm">{opt}</span>
+                    </span>
+                    <span className="flex-1 text-[13px] text-ink-100 leading-snug">{opt}</span>
                   </div>
                 </button>
               ))}

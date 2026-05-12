@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Timer } from "lucide-react";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 import { shuffle } from "../utils/random";
+import { SuitIcon } from "../components/icons";
 
 export default function Sort() {
   const navigate = useNavigate();
@@ -51,23 +53,24 @@ export default function Sort() {
     setTimeout(() => {
       setFeedback(null);
       setI((x) => (x + 1) % queue.length);
-    }, 350);
+    }, 300);
   };
 
   if (finished) {
-    if (score > 50) confetti({ particleCount: 100, spread: 80 });
+    if (score > 50) confetti({ particleCount: 60, spread: 70 });
     return (
-      <ModeShell title="Sort">
-        <div className="text-center py-10">
-          <div className="text-6xl mb-4">📦</div>
-          <div className="font-display text-4xl font-bold text-white">{score}</div>
-          <div className="text-white/60 mt-2">Final score</div>
-          <div className="mt-8 flex gap-3 justify-center">
-            <button className="btn-primary" onClick={() => window.location.reload()}>
+      <ModeShell title="Sort · Complete">
+        <div className="panel-elev p-8 text-center">
+          <div className="label-mono mb-2">Final score</div>
+          <div className="stat-num font-display text-5xl font-semibold text-ink-0 mb-6">
+            {score}
+          </div>
+          <div className="flex gap-2 justify-center">
+            <button className="btn-primary text-sm" onClick={() => window.location.reload()}>
               Play again
             </button>
-            <button className="btn-ghost" onClick={goHome}>
-              Home
+            <button className="btn-ghost text-sm" onClick={goHome}>
+              Back to subject
             </button>
           </div>
         </div>
@@ -78,17 +81,16 @@ export default function Sort() {
   return (
     <ModeShell
       title="Sort"
-      subtitle="Drop each card into its category. +1s correct / −2s wrong."
+      subtitle="Drop each card into its category · +1s correct / −2s wrong"
       hud={
-        <div className="flex items-center justify-between text-sm">
-          <div className="text-white">
-            Score: <span className="font-bold tabular-nums">{score}</span>
+        <div className="flex items-center justify-between text-[12px]">
+          <div className="flex items-center gap-2">
+            <span className="label-mono">Score</span>
+            <span className="stat-num text-ink-0">{score}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-white/50">Time</span>
-            <span
-              className={`font-bold tabular-nums ${timeLeft <= 10 ? "text-red-400" : "text-white"}`}
-            >
+            <Timer size={12} className={timeLeft <= 10 ? "text-red-400" : "text-ink-400"} />
+            <span className={`stat-num ${timeLeft <= 10 ? "text-red-400" : "text-ink-0"}`}>
               {timeLeft}s
             </span>
           </div>
@@ -98,32 +100,40 @@ export default function Sort() {
       <AnimatePresence mode="wait">
         <motion.div
           key={card.id}
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          initial={{ opacity: 0, y: 6, scale: 0.98 }}
           animate={
             feedback
               ? feedback.ok
-                ? { scale: [1, 1.1, 0.9], opacity: [1, 1, 0] }
-                : { x: [0, -10, 10, -8, 8, 0] }
+                ? { scale: [1, 1.04, 0.95], opacity: [1, 1, 0] }
+                : { x: [0, -8, 8, -6, 6, 0] }
               : { opacity: 1, y: 0, scale: 1 }
           }
-          transition={{ duration: feedback ? 0.35 : 0.2 }}
-          className="card p-6 mb-6 min-h-[160px] flex flex-col items-center justify-center text-center"
+          transition={{ duration: feedback ? 0.3 : 0.18 }}
+          className="panel-elev p-6 mb-5 min-h-[140px] flex flex-col items-center justify-center text-center"
         >
-          <div className="font-display text-3xl font-bold text-white mb-2">{card.name}</div>
-          <div className="text-white/60 text-sm">{card.species}</div>
+          <div className="label-mono mb-2">Specimen</div>
+          <div className="font-display text-2xl sm:text-3xl font-semibold text-ink-0 tracking-tightest leading-tight mb-1.5">
+            {card.name}
+          </div>
+          <div className="text-ink-400 text-[12px]">{card.species}</div>
         </motion.div>
       </AnimatePresence>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="label-mono mb-2">Place into category</div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {Object.entries(deck.suits).map(([key, s]) => (
           <button
             key={key}
             onClick={() => place(key)}
-            className="card p-4 hover:border-white/30 transition-all hover:scale-105"
-            style={{ borderColor: s.color + "55" }}
+            className="panel panel-hover p-3 text-left transition focus-ring"
+            style={{ borderColor: s.color + "40" }}
           >
-            <div className="text-3xl mb-1">{s.emoji}</div>
-            <div className="text-white text-sm font-medium">{s.label}</div>
+            <div className="flex items-center gap-2 mb-1">
+              <SuitIcon deck={deck.slug} suit={key} size={14} strokeWidth={2} style={{ color: s.color }} />
+              <span className="text-[12px] text-ink-50 font-medium leading-tight">
+                {s.label}
+              </span>
+            </div>
           </button>
         ))}
       </div>

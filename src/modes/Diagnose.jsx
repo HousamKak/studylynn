@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Check, Search, X } from "lucide-react";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 import { shuffle } from "../utils/random";
+import { SuitIcon } from "../components/icons";
 
 const TOTAL = 8;
 
@@ -49,7 +51,7 @@ export default function Diagnose() {
       const points = 25;
       setScore((s) => s + points);
       addXp(points);
-      confetti({ particleCount: 60, spread: 70 });
+      confetti({ particleCount: 50, spread: 60 });
     }
     setRevealed(true);
   };
@@ -68,19 +70,19 @@ export default function Diagnose() {
 
   if (finished) {
     return (
-      <ModeShell title={deck.prompts.diagnoseVerb}>
-        <div className="text-center py-10">
-          <div className="text-6xl mb-4">🩺</div>
-          <div className="font-display text-4xl font-bold text-white">{score}</div>
-          <div className="text-white/60 mt-2">
-            {score / 25} of {TOTAL} cases
+      <ModeShell title={`${deck.prompts.diagnoseVerb} · Complete`}>
+        <div className="panel-elev p-8 text-center">
+          <div className="label-mono mb-2">Cases resolved</div>
+          <div className="stat-num font-display text-5xl font-semibold text-ink-0 mb-1">
+            {score / 25}
           </div>
-          <div className="mt-8 flex gap-3 justify-center">
-            <button className="btn-primary" onClick={() => window.location.reload()}>
+          <div className="text-ink-300 text-sm mb-6">of {TOTAL} cases · {score} XP</div>
+          <div className="flex gap-2 justify-center">
+            <button className="btn-primary text-sm" onClick={() => window.location.reload()}>
               New shift
             </button>
-            <button className="btn-ghost" onClick={goHome}>
-              Home
+            <button className="btn-ghost text-sm" onClick={goHome}>
+              Back to subject
             </button>
           </div>
         </div>
@@ -95,93 +97,103 @@ export default function Diagnose() {
       title={deck.prompts.diagnoseVerb}
       subtitle={`Case ${round + 1} of ${TOTAL}`}
       hud={
-        <div className="text-sm text-white">
-          Score: <span className="font-bold tabular-nums">{score}</span>
+        <div className="text-[12px] flex items-center gap-2">
+          <span className="label-mono">Score</span>
+          <span className="stat-num text-ink-0">{score}</span>
         </div>
       }
     >
       <AnimatePresence mode="wait">
         <motion.div
           key={round}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.18 }}
         >
-          <div className="card p-6 mb-5">
-            <div className="text-xs uppercase tracking-wider text-white/40 mb-3">
-              {deck.prompts.caseFileTitle}
-            </div>
-            <div className="space-y-3 text-white/90">
-              <CaseLine label={deck.fieldLabels.species} value={c.species} />
-              <CaseLine label={deck.fieldLabels.keyClue} value={c.keyClue} />
-              <CaseLine label={deck.fieldLabels.lesions} value={c.lesions} />
-              <CaseLine label={deck.fieldLabels.mechanism} value={c.mechanism} />
-            </div>
-          </div>
+          <article className="panel-elev p-5 mb-4">
+            <header className="flex items-center justify-between mb-3">
+              <div className="label-mono">{deck.prompts.caseFileTitle}</div>
+              <div className="label-mono text-ink-400">
+                Anon-{(round + 1).toString().padStart(2, "0")}
+              </div>
+            </header>
+            <dl className="space-y-2.5 text-[13px]">
+              <CaseRow label={deck.fieldLabels.species} value={c.species} />
+              <CaseRow label={deck.fieldLabels.keyClue} value={c.keyClue} />
+              <CaseRow label={deck.fieldLabels.lesions} value={c.lesions} />
+              <CaseRow label={deck.fieldLabels.mechanism} value={c.mechanism} />
+            </dl>
+          </article>
 
           {!revealed ? (
             <>
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={`Search ${deck.prompts.identifyNoun} by name, species, or class…`}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:border-violet-500 focus:outline-none"
-              />
-              <div className="mt-3 space-y-2 max-h-72 overflow-y-auto">
+              <div className="relative mb-2">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={`Search ${deck.prompts.identifyNoun} by name, species, or class…`}
+                  className="w-full pl-9 pr-3 py-2.5 rounded-sm bg-ink-800 border border-ink-700 text-ink-50 placeholder:text-ink-500 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500/40 text-[13px]"
+                />
+              </div>
+              <div className="space-y-1.5 max-h-72 overflow-y-auto">
                 {filtered.map((d) => {
-                  const s = deck.suits[d.suit];
+                  const sc = deck.suits[d.suit].color;
                   return (
                     <button
                       key={d.id}
                       onClick={() => submit(d.id)}
-                      className="card w-full p-3 text-left hover:border-white/30 transition"
+                      className="panel panel-hover w-full p-2.5 text-left focus-ring"
                     >
-                      <div className="flex items-center gap-3">
-                        <span style={{ color: s.color }}>{s.emoji}</span>
-                        <div className="flex-1">
-                          <div className="text-white text-sm font-medium">{d.name}</div>
-                          <div className="text-white/40 text-xs">{d.species}</div>
+                      <div className="flex items-center gap-2.5">
+                        <SuitIcon deck={deck.slug} suit={d.suit} size={13} strokeWidth={2} style={{ color: sc }} className="shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-ink-50 text-[13px] font-medium leading-tight">
+                            {d.name}
+                          </div>
+                          <div className="text-ink-400 text-[11px] truncate">{d.species}</div>
                         </div>
                       </div>
                     </button>
                   );
                 })}
                 {filtered.length === 0 && (
-                  <div className="text-white/40 text-center py-4 text-sm">No matches.</div>
+                  <div className="text-ink-400 text-center py-4 text-[12px]">No matches.</div>
                 )}
               </div>
             </>
           ) : (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`card p-5 border-2 ${
-                picked === c.id ? "!border-green-500" : "!border-red-500"
+              className={`panel-elev p-5 border ${
+                picked === c.id ? "!border-green-500/50" : "!border-red-500/50"
               }`}
             >
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-2xl">{picked === c.id ? "✅" : "❌"}</span>
-                <div className="font-display text-xl font-bold text-white">
-                  {picked === c.id ? "Correct!" : `It was ${c.name}`}
-                </div>
-              </div>
-              <div className="pill mb-3" style={{ background: suit.color + "22", color: suit.color }}>
-                <span>{suit.emoji}</span>
-                <span>{c.name}</span>
-              </div>
-              <div className="text-sm text-white/80 space-y-1.5">
-                <div>
-                  <span className="text-white/40">{deck.fieldLabels.etiology}:</span> {c.etiology}
-                </div>
-                {c.pearls && (
-                  <div>
-                    <span className="text-white/40">{deck.fieldLabels.pearls}:</span> {c.pearls}
-                  </div>
+                {picked === c.id ? (
+                  <Check size={18} className="text-green-400" />
+                ) : (
+                  <X size={18} className="text-red-400" />
                 )}
+                <div className="font-display text-base font-semibold text-ink-0">
+                  {picked === c.id ? "Correct diagnosis" : `It was ${c.name}`}
+                </div>
               </div>
-              <button className="btn-primary mt-4 w-full" onClick={next}>
-                {round + 1 >= TOTAL ? "Finish shift" : "Next case →"}
+              <div className="flex items-center gap-2 mb-3 text-[11px]">
+                <span className="label-mono inline-flex items-center gap-1.5" style={{ color: suit.color }}>
+                  <SuitIcon deck={deck.slug} suit={c.suit} size={11} strokeWidth={2} />
+                  {c.name}
+                </span>
+              </div>
+              <dl className="space-y-2 text-[13px]">
+                <CaseRow label={deck.fieldLabels.etiology} value={c.etiology} />
+                {c.pearls && <CaseRow label={deck.fieldLabels.pearls} value={c.pearls} />}
+              </dl>
+              <button className="btn-primary text-sm mt-4 w-full" onClick={next}>
+                {round + 1 >= TOTAL ? "Finish shift →" : "Next case →"}
               </button>
             </motion.div>
           )}
@@ -191,11 +203,11 @@ export default function Diagnose() {
   );
 }
 
-function CaseLine({ label, value }) {
+function CaseRow({ label, value }) {
   return (
-    <div>
-      <div className="text-xs uppercase tracking-wider text-white/40">{label}</div>
-      <div className="text-white text-sm mt-0.5">{value}</div>
+    <div className="flex gap-3">
+      <dt className="label-mono w-20 shrink-0 pt-0.5">{label}</dt>
+      <dd className="text-ink-100 flex-1 leading-snug">{value}</dd>
     </div>
   );
 }

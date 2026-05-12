@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { generateQuestionSet, cardLookupFn } from "../utils/questions";
 import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
+import { SuitIcon } from "../components/icons";
 
 const TOTAL = 10;
 
@@ -40,7 +42,7 @@ export default function QuickQuiz() {
       setScore((s) => s + points);
       setStreak(newStreak);
       addXp(points);
-      if (newStreak >= 3) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+      if (newStreak >= 3) confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
     } else {
       setStreak(0);
     }
@@ -50,7 +52,7 @@ export default function QuickQuiz() {
     if (i + 1 >= TOTAL) {
       submitHighScore(`${deck.slug}:quickQuiz`, score);
       setFinished(true);
-      confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
+      confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
     } else {
       setI((x) => x + 1);
       setSelected(null);
@@ -59,19 +61,21 @@ export default function QuickQuiz() {
 
   if (finished) {
     return (
-      <ModeShell title="Quick Quiz">
-        <div className="text-center py-10">
-          <div className="text-6xl mb-4">🎉</div>
-          <div className="font-display text-4xl font-bold text-white">{score} XP</div>
-          <div className="text-white/60 mt-2">
-            You got {score > 0 ? Math.min(TOTAL, Math.ceil(score / 10)) : 0} of {TOTAL}
+      <ModeShell title="Quick Quiz · Complete" subtitle="Session summary">
+        <div className="panel-elev p-8 text-center">
+          <div className="label-mono mb-2">Final score</div>
+          <div className="stat-num font-display text-5xl font-semibold text-ink-0 mb-1">
+            {score}
           </div>
-          <div className="mt-8 flex gap-3 justify-center">
-            <button className="btn-primary" onClick={() => window.location.reload()}>
+          <div className="text-ink-300 text-sm mb-6">
+            {score > 0 ? Math.min(TOTAL, Math.ceil(score / 10)) : 0} of {TOTAL} correct
+          </div>
+          <div className="flex gap-2 justify-center">
+            <button className="btn-primary text-sm" onClick={() => window.location.reload()}>
               Play again
             </button>
-            <button className="btn-ghost" onClick={goHome}>
-              Home
+            <button className="btn-ghost text-sm" onClick={goHome}>
+              Back to subject
             </button>
           </div>
         </div>
@@ -84,16 +88,21 @@ export default function QuickQuiz() {
       title="Quick Quiz"
       subtitle={`Question ${i + 1} of ${TOTAL}`}
       hud={
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+        <div className="flex items-center gap-4 text-[12px]">
+          <div className="flex-1 h-1.5 bg-ink-800 border border-ink-700 rounded-sm overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
+              className="h-full bg-teal-500"
               animate={{ width: `${((i + (selected !== null ? 1 : 0)) / TOTAL) * 100}%` }}
             />
           </div>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-white font-semibold tabular-nums">{score} XP</span>
-            {streak >= 2 && <span className="text-orange-400 font-semibold">🔥 ×{streak}</span>}
+          <div className="flex items-center gap-3">
+            <span className="label-mono">XP</span>
+            <span className="stat-num text-ink-0">{score}</span>
+            {streak >= 2 && (
+              <span className="chip bg-orange-500/15 text-orange-300 border border-orange-500/30">
+                streak ×{streak}
+              </span>
+            )}
           </div>
         </div>
       }
@@ -101,49 +110,55 @@ export default function QuickQuiz() {
       <AnimatePresence mode="wait">
         <motion.div
           key={i}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.15 }}
         >
-          {suit && (
-            <div className="pill mb-4" style={{ background: suit.color + "22", color: suit.color }}>
-              <span>{suit.emoji}</span>
-              <span>{suit.label}</span>
+          {suit && card && (
+            <div className="flex items-center gap-2 mb-3 text-[11px]">
+              <span className="label-mono inline-flex items-center gap-1.5" style={{ color: suit.color }}>
+                <SuitIcon deck={deck.slug} suit={card.suit} size={11} strokeWidth={2} />
+                {suit.label}
+              </span>
             </div>
           )}
-          <div className="card p-6 mb-6">
-            <p className="text-white text-lg leading-relaxed whitespace-pre-wrap">{q.prompt}</p>
+          <div className="panel-elev p-5 mb-4">
+            <p className="text-ink-50 text-[15px] leading-relaxed whitespace-pre-wrap">
+              {q.prompt}
+            </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {q.options.map((opt, idx) => {
               const isCorrect = idx === q.answerIndex;
               const isSelected = idx === selected;
               const showResult = selected !== null;
-              let cls =
-                "card p-4 cursor-pointer text-left text-white hover:border-white/30 transition";
+              let cls = "panel panel-hover p-3.5 w-full text-left cursor-pointer focus-ring";
               if (showResult) {
-                if (isCorrect) cls += " !border-green-500 !bg-green-500/10";
-                else if (isSelected) cls += " !border-red-500 !bg-red-500/10";
-                else cls += " opacity-50";
-                cls = cls.replace("cursor-pointer", "cursor-default");
+                if (isCorrect) cls += " !bg-green-500/10 !border-green-500/50";
+                else if (isSelected) cls += " !bg-red-500/10 !border-red-500/50";
+                else cls += " opacity-40";
+                cls = cls.replace("cursor-pointer", "cursor-default panel-hover", 1);
               }
               return (
                 <motion.button
                   key={idx}
-                  whileTap={{ scale: showResult ? 1 : 0.98 }}
+                  whileTap={{ scale: showResult ? 1 : 0.99 }}
                   onClick={() => pick(idx)}
                   disabled={showResult}
-                  className={`w-full ${cls}`}
+                  className={cls}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-sm font-semibold shrink-0">
+                    <span className="stat-num text-[11px] text-ink-400 mt-1 w-4 shrink-0">
                       {String.fromCharCode(65 + idx)}
-                    </div>
-                    <div className="flex-1">{opt}</div>
-                    {showResult && isCorrect && <span className="text-green-400">✓</span>}
+                    </span>
+                    <div className="flex-1 text-ink-50 text-[14px] leading-snug">{opt}</div>
+                    {showResult && isCorrect && (
+                      <Check size={16} className="text-green-400 mt-0.5 shrink-0" />
+                    )}
                     {showResult && isSelected && !isCorrect && (
-                      <span className="text-red-400">✗</span>
+                      <X size={16} className="text-red-400 mt-0.5 shrink-0" />
                     )}
                   </div>
                 </motion.button>
@@ -153,40 +168,34 @@ export default function QuickQuiz() {
 
           {selected !== null && card && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-6 card p-5"
+              transition={{ duration: 0.18 }}
+              className="panel-elev p-4 mt-5"
             >
-              <div className="text-xs uppercase tracking-wider text-white/40 mb-2">
-                About {card.name}
-              </div>
-              <div className="space-y-2 text-sm text-white/80">
-                <div>
-                  <span className="text-white/40">{deck.fieldLabels.etiology}:</span>{" "}
-                  {card.etiology}
-                </div>
-                <div>
-                  <span className="text-white/40">{deck.fieldLabels.species}:</span>{" "}
-                  {card.species}
-                </div>
-                <div>
-                  <span className="text-white/40">{deck.fieldLabels.keyClue}:</span>{" "}
-                  {card.keyClue}
-                </div>
-                {card.pearls && (
-                  <div>
-                    <span className="text-white/40">{deck.fieldLabels.pearls}:</span>{" "}
-                    {card.pearls}
-                  </div>
-                )}
-              </div>
-              <button className="btn-primary mt-4 w-full" onClick={next}>
-                {i + 1 >= TOTAL ? "See results" : "Next question →"}
+              <div className="label-mono mb-3">About · {card.name}</div>
+              <dl className="space-y-2 text-[13px]">
+                <Detail label={deck.fieldLabels.etiology} value={card.etiology} />
+                <Detail label={deck.fieldLabels.species} value={card.species} />
+                <Detail label={deck.fieldLabels.keyClue} value={card.keyClue} highlight />
+                {card.pearls && <Detail label={deck.fieldLabels.pearls} value={card.pearls} />}
+              </dl>
+              <button className="btn-primary text-sm mt-4 w-full" onClick={next}>
+                {i + 1 >= TOTAL ? "See results →" : "Next question →"}
               </button>
             </motion.div>
           )}
         </motion.div>
       </AnimatePresence>
     </ModeShell>
+  );
+}
+
+function Detail({ label, value, highlight = false }) {
+  return (
+    <div className="flex gap-3">
+      <dt className="label-mono w-24 shrink-0">{label}</dt>
+      <dd className={highlight ? "text-teal-200 flex-1" : "text-ink-100 flex-1"}>{value}</dd>
+    </div>
   );
 }

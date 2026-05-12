@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Timer } from "lucide-react";
 import confetti from "canvas-confetti";
 import ModeShell from "../components/ModeShell";
 import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 import { shuffle, sample } from "../utils/random";
+import { SuitIcon } from "../components/icons";
 
 export default function Match() {
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ export default function Match() {
   const [timeLeft, setTimeLeft] = useState(90);
   const [finished, setFinished] = useState(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- `round` is a manual reset trigger
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const set = useMemo(() => sample(deck.cards, 6), [round, deck]);
   const leftLabels = useMemo(() => set.map((c) => ({ id: c.id, label: c.name })), [set]);
   const rightLabels = useMemo(
@@ -52,23 +54,19 @@ export default function Match() {
   useEffect(() => {
     if (Object.keys(matched).length === set.length) {
       addXp(20);
-      confetti({ particleCount: 80, spread: 70 });
+      confetti({ particleCount: 60, spread: 60 });
       setTimeout(() => {
         setRound((r) => r + 1);
         setMatched({});
         setWrong({});
         setSelectedCard(null);
         setField(pairFields[Math.floor(Math.random() * pairFields.length)]);
-      }, 700);
+      }, 600);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matched, set.length, addXp]);
 
-  const handleLeft = (id) => {
-    if (matched[id]) return;
-    setSelectedCard(id);
-  };
-
+  const handleLeft = (id) => !matched[id] && setSelectedCard(id);
   const handleRight = (id) => {
     if (matched[id] || !selectedCard) return;
     const correct = selectedCard === id;
@@ -87,17 +85,18 @@ export default function Match() {
 
   if (finished) {
     return (
-      <ModeShell title="Match">
-        <div className="text-center py-10">
-          <div className="text-6xl mb-4">⏱</div>
-          <div className="font-display text-4xl font-bold text-white">{score}</div>
-          <div className="text-white/60 mt-2">Final score</div>
-          <div className="mt-8 flex gap-3 justify-center">
-            <button className="btn-primary" onClick={() => window.location.reload()}>
+      <ModeShell title="Match · Complete">
+        <div className="panel-elev p-8 text-center">
+          <div className="label-mono mb-2">Final score</div>
+          <div className="stat-num font-display text-5xl font-semibold text-ink-0 mb-6">
+            {score}
+          </div>
+          <div className="flex gap-2 justify-center">
+            <button className="btn-primary text-sm" onClick={() => window.location.reload()}>
               Play again
             </button>
-            <button className="btn-ghost" onClick={goHome}>
-              Home
+            <button className="btn-ghost text-sm" onClick={goHome}>
+              Back to subject
             </button>
           </div>
         </div>
@@ -110,15 +109,14 @@ export default function Match() {
       title="Match"
       subtitle={`Match ${deck.prompts.identifyNoun} with ${field.label.toLowerCase()}`}
       hud={
-        <div className="flex items-center justify-between text-sm">
-          <div className="text-white">
-            Score: <span className="font-bold tabular-nums">{score}</span>
+        <div className="flex items-center justify-between text-[12px]">
+          <div className="flex items-center gap-2">
+            <span className="label-mono">Score</span>
+            <span className="stat-num text-ink-0">{score}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-white/50">Time</span>
-            <span
-              className={`font-bold tabular-nums ${timeLeft <= 10 ? "text-red-400" : "text-white"}`}
-            >
+            <Timer size={12} className={timeLeft <= 10 ? "text-red-400" : "text-ink-400"} />
+            <span className={`stat-num ${timeLeft <= 10 ? "text-red-400" : "text-ink-0"}`}>
               {timeLeft}s
             </span>
           </div>
@@ -126,13 +124,13 @@ export default function Match() {
       }
     >
       <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <div className="text-xs uppercase tracking-wider text-white/40 mb-1">
+        <div className="space-y-1.5">
+          <div className="label-mono mb-1">
             {deck.prompts.identifyNoun.charAt(0).toUpperCase() + deck.prompts.identifyNoun.slice(1)}
           </div>
           {leftLabels.map((l) => {
             const c = deck.cards.find((x) => x.id === l.id);
-            const suit = deck.suits[c.suit];
+            const suitColor = deck.suits[c.suit].color;
             const isMatched = matched[l.id];
             const isSelected = selectedCard === l.id;
             return (
@@ -140,25 +138,25 @@ export default function Match() {
                 key={l.id}
                 onClick={() => handleLeft(l.id)}
                 disabled={isMatched}
-                className={`w-full text-left p-3 rounded-xl border transition-all ${
+                className={`w-full text-left p-3 rounded-sm border text-[13px] transition-colors focus-ring ${
                   isMatched
                     ? "bg-green-500/10 border-green-500/40 opacity-50"
                     : isSelected
-                    ? "bg-violet-500/20 border-violet-500"
-                    : "card hover:border-white/30"
+                    ? "bg-teal-500/15 border-teal-400"
+                    : "panel panel-hover"
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span style={{ color: suit.color }}>{suit.emoji}</span>
-                  <span className="text-white text-sm font-medium">{l.label}</span>
+                  <SuitIcon deck={deck.slug} suit={c.suit} size={13} strokeWidth={2} style={{ color: suitColor }} className="shrink-0" />
+                  <span className="text-ink-50 font-medium leading-snug">{l.label}</span>
                 </div>
               </button>
             );
           })}
         </div>
 
-        <div className="space-y-2">
-          <div className="text-xs uppercase tracking-wider text-white/40 mb-1">{field.label}</div>
+        <div className="space-y-1.5">
+          <div className="label-mono mb-1">{field.label}</div>
           {rightLabels.map((l) => {
             const isMatched = matched[l.id];
             const isWrong = wrong[l.id];
@@ -167,15 +165,15 @@ export default function Match() {
                 key={l.id}
                 onClick={() => handleRight(l.id)}
                 disabled={isMatched}
-                className={`w-full text-left p-3 rounded-xl border transition-all text-sm text-white/90 ${
+                className={`w-full text-left p-3 rounded-sm border text-[13px] transition-colors focus-ring ${
                   isMatched
                     ? "bg-green-500/10 border-green-500/40 opacity-50"
                     : isWrong
-                    ? "bg-red-500/20 border-red-500 animate-shake"
-                    : "card hover:border-white/30"
+                    ? "bg-red-500/15 border-red-500/50 animate-shake"
+                    : "panel panel-hover"
                 }`}
               >
-                {l.label}
+                <span className="text-ink-100 leading-snug">{l.label}</span>
               </button>
             );
           })}
