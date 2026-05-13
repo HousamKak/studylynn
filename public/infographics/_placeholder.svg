@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#13162a"/>
+      <stop offset="100%" stop-color="#070815"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#d946ef"/>
+    </linearGradient>
+    <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <rect width="400" height="400" fill="url(#grid)"/>
+
+  <!-- Decorative blobs -->
+  <circle cx="80" cy="80" r="60" fill="url(#accent)" opacity="0.15"/>
+  <circle cx="320" cy="320" r="80" fill="url(#accent)" opacity="0.1"/>
+
+  <!-- Frame -->
+  <rect x="20" y="20" width="360" height="360" rx="20" ry="20"
+        fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="6 8"/>
+
+  <!-- Icon: image-off / placeholder -->
+  <g transform="translate(160 130)">
+    <rect x="0" y="0" width="80" height="80" rx="10" ry="10"
+          fill="rgba(255,255,255,0.04)" stroke="url(#accent)" stroke-width="2"/>
+    <circle cx="26" cy="28" r="6" fill="url(#accent)" opacity="0.7"/>
+    <path d="M 10 64 L 30 44 L 50 60 L 64 50 L 76 64 Z"
+          fill="url(#accent)" opacity="0.5"/>
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="250" text-anchor="middle"
+        font-family="IBM Plex Sans, system-ui, sans-serif"
+        font-size="20" font-weight="600"
+        fill="#ecedf5" letter-spacing="-0.01em">
+    Image coming soon
+  </text>
+
+  <!-- Subtitle -->
+  <text x="200" y="278" text-anchor="middle"
+        font-family="IBM Plex Mono, monospace"
+        font-size="11" font-weight="500"
+        fill="#a1a6c2" letter-spacing="0.12em">
+    PROMPT READY · IMAGE PENDING
+  </text>
+
+  <!-- Bottom hint -->
+  <text x="200" y="350" text-anchor="middle"
+        font-family="IBM Plex Sans, system-ui, sans-serif"
+        font-size="12"
+        fill="#7a809e">
+    Tap "Prompt" to view the generation brief
+  </text>
+</svg>

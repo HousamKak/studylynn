@@ -49,6 +49,18 @@ export const subjects = [
     modes: 6,
     cards: 66,
   },
+  {
+    slug: "toxico",
+    title: "Veterinary Toxicology",
+    blurb:
+      "Definitions, dose concepts (LD50/NOAEL/ADI/MRL), toxicokinetics (ADME), DNA adducts, enzyme inhibitors, and Hb/neuro/mutagenic/endocrine mechanisms.",
+    color: "#84cc16",
+    gradient: "from-lime-500/40 to-emerald-500/30",
+    emoji: "⚗️",
+    status: "ready",
+    modes: 6,
+    cards: 45,
+  },
 ];
 
 export const subjectBySlug = (slug) => subjects.find((s) => s.slug === slug);

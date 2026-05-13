@@ -61,6 +61,14 @@ export const SUIT_ICONS = {
   "gi:prokinetic": MoveRight,
   "gi:antidiarrheal": AlertCircle,
   "gi:laxative": Beaker,
+
+  // Toxicology
+  "toxico:fundamentals": Scroll,
+  "toxico:doses": Activity,
+  "toxico:kinetics": Waves,
+  "toxico:dynamics": Dna,
+  "toxico:enzymes": FlaskConical,
+  "toxico:systems": Heart,
 };
 
 export const MODE_ICONS = {
@@ -77,6 +85,7 @@ export const SUBJECT_ICONS = {
   pharma: Pill,
   oral: Activity,
   gi: TestTube,
+  toxico: FlaskConical,
 };
 
 export function lookupSuitIcon(deckSlug, suitKey) {

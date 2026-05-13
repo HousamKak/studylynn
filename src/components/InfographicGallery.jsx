@@ -10,8 +10,13 @@ export default function InfographicGallery({ deck }) {
 
   const items = deck.infographics || [];
   const baseUrl = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/infographics/${deck.slug}`;
+  const placeholderUrl = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/infographics/_placeholder.svg`;
   const imageUrl = (file) => `${baseUrl}/${file}.jpg`;
   const promptUrl = (file) => `${baseUrl}/${file}.md`;
+  const onImgError = (e) => {
+    if (e.currentTarget.src.endsWith("_placeholder.svg")) return;
+    e.currentTarget.src = placeholderUrl;
+  };
 
   const openImage = (idx) => setActive({ idx, mode: "image" });
   const openPrompt = async (idx) => {
@@ -70,6 +75,7 @@ export default function InfographicGallery({ deck }) {
                   src={imageUrl(g.file)}
                   alt={g.title}
                   loading="lazy"
+                  onError={onImgError}
                   className="w-full h-full object-cover transition-opacity group-hover:opacity-90"
                 />
                 <div
@@ -166,6 +172,7 @@ export default function InfographicGallery({ deck }) {
                   <img
                     src={imageUrl(items[active.idx].file)}
                     alt={items[active.idx].title}
+                    onError={onImgError}
                     className="block mx-auto max-w-full max-h-[78vh] object-contain"
                   />
                 ) : (
