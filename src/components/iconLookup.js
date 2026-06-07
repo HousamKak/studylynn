@@ -14,6 +14,7 @@ import {
   FlaskConical,
   Flame,
   Heart,
+  Hexagon,
   Layers,
   LayoutGrid,
   Microscope,
@@ -23,6 +24,7 @@ import {
   Skull,
   Stethoscope,
   Scroll,
+  Syringe,
   Target,
   TestTube,
   Waves,
@@ -69,6 +71,14 @@ export const SUIT_ICONS = {
   "toxico:dynamics": Dna,
   "toxico:enzymes": FlaskConical,
   "toxico:systems": Heart,
+
+  // Antimicrobials
+  "antimicrobials:betalactam": Hexagon,
+  "antimicrobials:cellwall": ShieldCheck,
+  "antimicrobials:ribo30s": Atom,
+  "antimicrobials:ribo50s": Microscope,
+  "antimicrobials:nucleic": Dna,
+  "antimicrobials:folate": Beaker,
 };
 
 export const MODE_ICONS = {
@@ -86,6 +96,7 @@ export const SUBJECT_ICONS = {
   oral: Activity,
   gi: TestTube,
   toxico: FlaskConical,
+  antimicrobials: Syringe,
 };
 
 export function lookupSuitIcon(deckSlug, suitKey) {

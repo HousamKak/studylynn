@@ -61,6 +61,18 @@ export const subjects = [
     modes: 6,
     cards: 45,
   },
+  {
+    slug: "antimicrobials",
+    title: "Veterinary Antimicrobial Pharmacology",
+    blurb:
+      "Antibiotics by mechanism: β-lactams (penicillins/cephalosporins/carbapenems), glycopeptides, 30S & 50S protein-synthesis inhibitors, fluoroquinolones/rifampin, and sulfonamides.",
+    color: "#3b82f6",
+    gradient: "from-blue-500/40 to-cyan-500/30",
+    emoji: "🧫",
+    status: "ready",
+    modes: 6,
+    cards: 36,
+  },
 ];
 
 export const subjectBySlug = (slug) => subjects.find((s) => s.slug === slug);
