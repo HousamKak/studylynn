@@ -14,6 +14,8 @@ Deployed to [study.lynnhamad.com](https://study.lynnhamad.com).
 | Veterinary Pharmacology (combined) | 70 | 6 | — |
 | Oral Cavity Pathology | 29 | 6 | 6 |
 | GI Pharmacology — Detailed | 66 | 6 | 7 |
+| Veterinary Toxicology | 45 | 6 | 9 |
+| Veterinary Antimicrobial Pharmacology | 36 | 6 | 8 |
 
 Each subject lives in `src/data/decks/<slug>.js` and is a self-contained deck with:
 
@@ -118,6 +120,8 @@ src/
       pharma.js
       oral.js
       gi.js
+      toxico.js
+      antimicrobials.js
       index.js               Slug → deck registry
   utils/
     questions.js             MCQ generator (suit-aware distractors)

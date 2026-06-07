@@ -598,4 +598,54 @@ export const antimicrobialsDeck = {
     caseFileTitle: "💉 Drug profile",
     diagnoseVerb: "Identify the drug",
   },
+  infographics: [
+    {
+      id: 1,
+      title: "Penicillins & β-Lactamase Inhibitors",
+      file: "01-penicillins-beta-lactamase",
+      suits: ["betalactam"],
+    },
+    {
+      id: 2,
+      title: "Cephalosporins & Carbapenems",
+      file: "02-cephalosporins-carbapenems",
+      suits: ["betalactam"],
+    },
+    {
+      id: 3,
+      title: "Glycopeptides & Polypeptides — Vancomycin & Bacitracin",
+      file: "03-glycopeptides-polypeptides",
+      suits: ["cellwall"],
+    },
+    {
+      id: 4,
+      title: "Tetracyclines",
+      file: "04-tetracyclines",
+      suits: ["ribo30s"],
+    },
+    {
+      id: 5,
+      title: "Aminoglycosides & Spectinomycin",
+      file: "05-aminoglycosides-spectinomycin",
+      suits: ["ribo30s", "ribo50s"],
+    },
+    {
+      id: 6,
+      title: "50S Inhibitors — Macrolides, Lincosamides & Chloramphenicol",
+      file: "06-protein-synthesis-50s",
+      suits: ["ribo50s"],
+    },
+    {
+      id: 7,
+      title: "Fluoroquinolones & Rifampin",
+      file: "07-fluoroquinolones-rifampin",
+      suits: ["nucleic"],
+    },
+    {
+      id: 8,
+      title: "Sulfonamides & Trimethoprim",
+      file: "08-sulfonamides-trimethoprim",
+      suits: ["folate"],
+    },
+  ],
 };
