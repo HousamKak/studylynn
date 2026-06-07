@@ -20,7 +20,7 @@ const MODES = [
   {
     id: "quiz",
     title: "Quick Quiz",
-    desc: "10 multiple-choice questions from the whole deck.",
+    desc: "20 multiple-choice questions from the whole deck.",
     Icon: Zap,
     scoreKey: "quickQuiz",
     accent: "#22d3ee",

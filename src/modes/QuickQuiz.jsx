@@ -9,7 +9,7 @@ import { useDeck } from "../state/deckContextHook";
 import { useProgress } from "../state/progress";
 import { SuitIcon } from "../components/icons";
 
-const TOTAL = 10;
+const TOTAL = 20;
 
 export default function QuickQuiz() {
   const navigate = useNavigate();

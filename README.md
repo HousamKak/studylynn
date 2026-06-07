@@ -31,7 +31,7 @@ Each subject lives in `src/data/decks/<slug>.js` and is a self-contained deck wi
 
 All six modes work across every deck — they read from the active deck via `useDeck()` context and render with that deck's field labels and icons.
 
-- **Quick Quiz** — 10 MCQs, distractors pulled from the same suit
+- **Quick Quiz** — 20 MCQs, distractors pulled from the same suit
 - **Flashcards** — self-graded SRS (Again / Good / Easy), weakest-first ordering
 - **Match** — 6 pairs, randomized: disease ↔ etiology / key clue / species
 - **Sort** — drop a card into the correct category bucket, timed
