@@ -15,7 +15,7 @@ Deployed to [study.lynnhamad.com](https://study.lynnhamad.com).
 | Oral Cavity Pathology | 29 | 6 | 6 |
 | GI Pharmacology — Detailed | 66 | 6 | 7 |
 | Veterinary Toxicology | 45 | 6 | 9 |
-| Veterinary Antimicrobial Pharmacology | 36 | 6 | 8 |
+| Veterinary Antimicrobial Pharmacology | 100 | 6 | 8 |
 
 Each subject lives in `src/data/decks/<slug>.js` and is a self-contained deck with:
 

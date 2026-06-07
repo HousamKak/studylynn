@@ -71,7 +71,7 @@ export const subjects = [
     emoji: "🧫",
     status: "ready",
     modes: 6,
-    cards: 36,
+    cards: 100,
   },
 ];
 
