@@ -16,6 +16,7 @@ Deployed to [study.lynnhamad.com](https://study.lynnhamad.com).
 | GI Pharmacology — Detailed | 66 | 6 | 7 |
 | Veterinary Toxicology | 45 | 6 | 9 |
 | Veterinary Antimicrobial Pharmacology | 100 | 6 | 8 |
+| Veterinary Necropsy & Pathology | 161 | 7 | — |
 
 Each subject lives in `src/data/decks/<slug>.js` and is a self-contained deck with:
 

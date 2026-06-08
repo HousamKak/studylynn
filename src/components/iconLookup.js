@@ -8,18 +8,24 @@ import {
   Bone,
   Brain,
   CircleDashed,
+  ClipboardCheck,
   Crosshair,
   Dna,
   Droplet,
+  FileText,
   FlaskConical,
   Flame,
   Heart,
+  HeartPulse,
   Hexagon,
+  Hourglass,
   Layers,
   LayoutGrid,
   Microscope,
   MoveRight,
   Pill,
+  Scale,
+  Scissors,
   ShieldCheck,
   Skull,
   Stethoscope,
@@ -79,6 +85,15 @@ export const SUIT_ICONS = {
   "antimicrobials:ribo50s": Microscope,
   "antimicrobials:nucleic": Dna,
   "antimicrobials:folate": Beaker,
+
+  // Necropsy & Pathology
+  "necropsy:foundations": ClipboardCheck,
+  "necropsy:postmortem": Hourglass,
+  "necropsy:dissection": Scissors,
+  "necropsy:sampling": FlaskConical,
+  "necropsy:forensic": Scale,
+  "necropsy:reporting": FileText,
+  "necropsy:systemic": HeartPulse,
 };
 
 export const MODE_ICONS = {
@@ -97,6 +112,7 @@ export const SUBJECT_ICONS = {
   gi: TestTube,
   toxico: FlaskConical,
   antimicrobials: Syringe,
+  necropsy: Skull,
 };
 
 export function lookupSuitIcon(deckSlug, suitKey) {

@@ -73,6 +73,18 @@ export const subjects = [
     modes: 6,
     cards: 100,
   },
+  {
+    slug: "necropsy",
+    title: "Veterinary Necropsy & Pathology",
+    blurb:
+      "Postmortem technique, artifacts, sampling science, forensics, report writing, and organ-system pathology (septicemia, cardiovascular, respiratory). The full necropsy workflow.",
+    color: "#dc2626",
+    gradient: "from-red-500/40 to-rose-500/30",
+    emoji: "🔬",
+    status: "ready",
+    modes: 6,
+    cards: 161,
+  },
 ];
 
 export const subjectBySlug = (slug) => subjects.find((s) => s.slug === slug);
