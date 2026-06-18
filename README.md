@@ -17,6 +17,7 @@ Deployed to [study.lynnhamad.com](https://study.lynnhamad.com).
 | Veterinary Toxicology | 45 | 6 | 9 |
 | Veterinary Antimicrobial Pharmacology | 100 | 6 | 8 |
 | Veterinary Necropsy & Pathology | 161 | 7 | — |
+| Surgical Pathology | 144 | 6 | 8 |
 
 Each subject lives in `src/data/decks/<slug>.js` and is a self-contained deck with:
 
@@ -38,8 +39,9 @@ All six modes work across every deck — they read from the active deck via `use
 - **Sort** — drop a card into the correct category bucket, timed
 - **Boss Battle** — 60s survival, 3 lives, correct = +5s
 - **Diagnose** — read a case file, search-pick the correct entry from the whole deck
+- **True / False** — rapid-fire statements with corrections shown for false ones; appears only on decks that ship a `trueFalse` bank (e.g. Surgical Pathology)
 
-Each session writes to per-deck mastery (`<slug>:<card-id>`) and per-mode high scores (`<slug>:<mode>`).
+Each session writes to per-deck mastery (`<slug>:<card-id>`) and per-mode high scores (`<slug>:<mode>`). The mode grid on each subject page is rendered from the modes a deck actually supports, so a deck without a `trueFalse` bank simply shows the six core modes.
 
 ---
 

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
+  CheckCheck,
   Crosshair,
   LayoutGrid,
   Layers,
@@ -65,6 +66,15 @@ const MODES = [
     scoreKey: "diagnose",
     accent: "#fbbf24",
   },
+  {
+    id: "truefalse",
+    title: "True / False",
+    desc: "Rapid-fire statements. False ones show the correction.",
+    Icon: CheckCheck,
+    scoreKey: "trueFalse",
+    accent: "#f97316",
+    requiresTF: true,
+  },
 ];
 
 export default function SubjectHome() {
@@ -74,6 +84,9 @@ export default function SubjectHome() {
   const subjectMeta = subjects.find((s) => s.slug === deck.slug);
   const themeColor = subjectMeta?.color || "#a78bfa";
   const emoji = subjectMeta?.emoji || "📚";
+  const availableModes = MODES.filter(
+    (m) => !m.requiresTF || (deck.trueFalse && deck.trueFalse.length > 0)
+  );
 
   let mastered = 0;
   let learning = 0;
@@ -134,7 +147,7 @@ export default function SubjectHome() {
               <span className="text-ink-500">·</span>
               <span>{Object.keys(deck.suits).length} categories</span>
               <span className="text-ink-500">·</span>
-              <span>6 modes</span>
+              <span>{availableModes.length} modes</span>
               {totalSeen > 0 && (
                 <>
                   <span className="text-ink-500">·</span>
@@ -178,7 +191,7 @@ export default function SubjectHome() {
           Study modes
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
-          {MODES.map((m, i) => {
+          {availableModes.map((m, i) => {
             const Icon = m.Icon;
             const high = state.highScores?.[`${deck.slug}:${m.scoreKey}`] ?? 0;
             return (

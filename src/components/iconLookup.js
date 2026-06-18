@@ -7,6 +7,7 @@ import {
   Beaker,
   Bone,
   Brain,
+  CheckCheck,
   CircleDashed,
   ClipboardCheck,
   Crosshair,
@@ -28,9 +29,11 @@ import {
   Scissors,
   ShieldCheck,
   Skull,
+  SprayCan,
   Stethoscope,
   Scroll,
   Syringe,
+  Thermometer,
   Target,
   TestTube,
   Waves,
@@ -94,6 +97,14 @@ export const SUIT_ICONS = {
   "necropsy:forensic": Scale,
   "necropsy:reporting": FileText,
   "necropsy:systemic": HeartPulse,
+
+  // Surgical Pathology
+  "surgpath:sepsis": HeartPulse,
+  "surgpath:septclin": Thermometer,
+  "surgpath:abscesspath": Droplet,
+  "surgpath:abscessclin": Syringe,
+  "surgpath:asepsis": ShieldCheck,
+  "surgpath:sterile": SprayCan,
 };
 
 export const MODE_ICONS = {
@@ -103,6 +114,7 @@ export const MODE_ICONS = {
   sort: LayoutGrid,
   boss: Skull,
   diagnose: Stethoscope,
+  truefalse: CheckCheck,
 };
 
 export const SUBJECT_ICONS = {
@@ -113,6 +125,7 @@ export const SUBJECT_ICONS = {
   toxico: FlaskConical,
   antimicrobials: Syringe,
   necropsy: Skull,
+  surgpath: Scissors,
 };
 
 export function lookupSuitIcon(deckSlug, suitKey) {

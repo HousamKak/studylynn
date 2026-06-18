@@ -85,6 +85,18 @@ export const subjects = [
     modes: 6,
     cards: 161,
   },
+  {
+    slug: "surgpath",
+    title: "Surgical Pathology",
+    blurb:
+      "Septicemia & sepsis (SIRS, septic shock, cytokines), hot & cold abscess (pus, pyogenic membrane, drainage), and infection prevention / surgical asepsis (Altemeier classes, sterilization, antiseptics). Includes a True/False mode.",
+    color: "#f97316",
+    gradient: "from-orange-500/40 to-amber-500/30",
+    emoji: "🩹",
+    status: "ready",
+    modes: 7,
+    cards: 144,
+  },
 ];
 
 export const subjectBySlug = (slug) => subjects.find((s) => s.slug === slug);

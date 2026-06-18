@@ -5,6 +5,7 @@ import { giDeck } from "./gi";
 import { toxicoDeck } from "./toxico";
 import { antimicrobialsDeck } from "./antimicrobials";
 import { necropsyDeck } from "./necropsy";
+import { surgpathDeck } from "./surgpath";
 
 export const decks = {
   neuropath: neuropathDeck,
@@ -14,6 +15,7 @@ export const decks = {
   toxico: toxicoDeck,
   antimicrobials: antimicrobialsDeck,
   necropsy: necropsyDeck,
+  surgpath: surgpathDeck,
 };
 
 export const getDeck = (slug) => decks[slug] || null;

@@ -11,6 +11,7 @@ import Match from "./modes/Match";
 import Sort from "./modes/Sort";
 import BossBattle from "./modes/BossBattle";
 import Diagnose from "./modes/Diagnose";
+import TrueFalse from "./modes/TrueFalse";
 
 const MODE_COMPONENTS = {
   quiz: QuickQuiz,
@@ -19,6 +20,7 @@ const MODE_COMPONENTS = {
   sort: Sort,
   boss: BossBattle,
   diagnose: Diagnose,
+  truefalse: TrueFalse,
 };
 
 function SubjectRouter() {
