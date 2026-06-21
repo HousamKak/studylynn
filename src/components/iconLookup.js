@@ -7,12 +7,14 @@ import {
   Beaker,
   Bone,
   Brain,
+  Bug,
   CheckCheck,
   CircleDashed,
   ClipboardCheck,
   Crosshair,
   Dna,
   Droplet,
+  Droplets,
   FileText,
   FlaskConical,
   Flame,
@@ -29,6 +31,8 @@ import {
   Scissors,
   ShieldCheck,
   Skull,
+  Soup,
+  Spline,
   SprayCan,
   Stethoscope,
   Scroll,
@@ -37,6 +41,8 @@ import {
   Target,
   TestTube,
   Waves,
+  Wheat,
+  Worm,
   Zap,
 } from "lucide-react";
 
@@ -105,6 +111,14 @@ export const SUIT_ICONS = {
   "surgpath:abscessclin": Syringe,
   "surgpath:asepsis": ShieldCheck,
   "surgpath:sterile": SprayCan,
+
+  // Pathological Anatomy 2 — Digestive Tract
+  "anapath2:forestomach": Wheat,
+  "anapath2:stomach": Soup,
+  "anapath2:intestbasics": Droplets,
+  "anapath2:intestmech": Spline,
+  "anapath2:enteritis": Bug,
+  "anapath2:giparasitestumors": Worm,
 };
 
 export const MODE_ICONS = {
@@ -126,6 +140,7 @@ export const SUBJECT_ICONS = {
   antimicrobials: Syringe,
   necropsy: Skull,
   surgpath: Scissors,
+  anapath2: Microscope,
 };
 
 export function lookupSuitIcon(deckSlug, suitKey) {

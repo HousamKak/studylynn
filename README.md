@@ -18,6 +18,7 @@ Deployed to [study.lynnhamad.com](https://study.lynnhamad.com).
 | Veterinary Antimicrobial Pharmacology | 100 | 6 | 8 |
 | Veterinary Necropsy & Pathology | 161 | 7 | — |
 | Surgical Pathology | 144 | 6 | 8 |
+| Pathological Anatomy 2 | 101 | 6 | 10 |
 
 Each subject lives in `src/data/decks/<slug>.js` and is a self-contained deck with:
 

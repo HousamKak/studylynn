@@ -97,6 +97,18 @@ export const subjects = [
     modes: 7,
     cards: 144,
   },
+  {
+    slug: "anapath2",
+    title: "Pathological Anatomy 2",
+    blurb:
+      "Digestive-tract pathology: forestomach (tympanism, acidosis, hardware disease), stomach & abomasum (GDV, ulcers, parasites, tumors), and intestines (diarrhea mechanisms, obstruction, infectious enteritis, parasites, tumors).",
+    color: "#6366f1",
+    gradient: "from-indigo-500/40 to-violet-500/30",
+    emoji: "🦠",
+    status: "ready",
+    modes: 6,
+    cards: 101,
+  },
 ];
 
 export const subjectBySlug = (slug) => subjects.find((s) => s.slug === slug);
